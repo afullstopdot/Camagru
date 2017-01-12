@@ -4,9 +4,9 @@ class Controller
 {
   protected function model($model)
   {
-    if (file_exists('../models/' . $model . '.php'))
+    if (file_exists('../app/models/' . $model . '.php'))
     {
-      require_once '../models/' . $model . '.php';
+      require_once '../app/models/' . $model . '.php';
       return new $model();
     }
     return NULL;
@@ -14,9 +14,9 @@ class Controller
 
   protected function view($view, $data = [])
   {
-    if (file_exists('../views/' . $view . '.php'))
+    if (file_exists('../app/views/' . $view . '.php'))
     {
-      require_once '../views/' . $view . '.php';
+      require_once '../app/views/' . $view . '.php';
     }
   }
 }

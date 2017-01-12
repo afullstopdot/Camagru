@@ -32,7 +32,6 @@ class App
     }
 
     $this->params = $url['params'] ? $url['params'] : [];
-
     call_user_func_array([$this->controller, $this->method], $this->params);
   }
 

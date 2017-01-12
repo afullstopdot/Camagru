@@ -2,8 +2,8 @@
 
 class home extends Controller
 {
-  public function index()
+  public function index($params)
   {
-    
+    $this->view('home/index', $params);
   }
 }
