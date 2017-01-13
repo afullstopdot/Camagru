@@ -6,153 +6,7 @@
     <title>Camagru - Create</title>
     <meta name="viewport" charset="UTF-8" content="width=device-width, initial scale=1">
     <link href="https://fonts.googleapis.com/css?family=Architects+Daughter|Shadows+Into+Light" rel="stylesheet">
-    <style>
-      body
-      {
-        margin:0;
-        height: 100%;
-        background-image: url('http://wallpapers-and-backgrounds.net/wp-content/uploads/2016/01/photography-1080p-background_1_1280x720.jpg');
-        background-attachment: fixed;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        font-family: 'Shadows Into Light', cursive;
-      }
-      /*Nav bar*/
-      ul.topnav
-      {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background-color: #333;
-      }
-
-      ul.topnav li
-      {
-        float: left;
-      }
-
-      ul.topnav li a
-      {
-        display: inline-block;
-        color: #f2f2f2;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        transition: 0.3s;
-        font-size: 17px;
-      }
-
-      ul.topnav li a:hover
-      {
-        background-color: #555;
-      }
-
-      ul.topnav li.icon
-      {
-        display: none;
-      }
-
-      @media screen and (max-width:680px) {
-
-        ul.topnav li:not(:first-child)
-        {
-          display: none;
-        }
-
-        ul.topnav li.icon
-        {
-          float: right;
-          display: inline-block;
-        }
-
-      }
-
-      @media screen and (max-width:680px) {
-
-        ul.topnav.responsive
-        {
-          position: relative;
-        }
-
-        ul.topnav.responsive li.icon
-        {
-          position: absolute;
-          right: 0;
-          top: 0;
-        }
-
-        ul.topnav.responsive li
-        {
-          float: none;
-          display: inline;
-        }
-
-        ul.topnav.responsive li a
-        {
-          display: block;
-          text-align: left;
-        }
-      }
-      form
-      {
-        border: 3px solid #f1f1f1;
-      }
-
-      input[type=text], input[type=password], input[type=email]
-      {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      }
-
-      button
-      {
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-      }
-
-      .cancelbtn
-      {
-        width: auto;
-        padding: 10px 18px;
-        background-color: #f44336;
-      }
-
-      .container
-      {
-        padding: 16px;
-      }
-
-      span.psw
-      {
-        float: right;
-        padding-top: 16px;
-      }
-
-      /* Change styles for span and cancel button on extra small screens */
-      @media screen and (max-width: 300px)
-      {
-        span.psw
-        {
-          display: block;
-          float: none;
-        }
-        .cancelbtn
-        {
-           width: 100%;
-        }
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="<?php echo SITE_URL; ?>/css/camagru.css">
   </head>
 
   <body>
@@ -168,20 +22,28 @@
 
     </header>
 
-    <form action="action_page.php">
+    <form id="signup" name="signup" action="/Camagru/public/auth/signup" method="POST">
       <div class="container">
-        <label><b style="color: white;">E-mail</b></label>
-        <input type="email" placeholder="placeholder@domain.co" name="email" required>
+        <h3 style="color: gold; text-align: center;">Sign Up to create, share & like pics!</h3>
+        <label><b id="b-email" style="color: #14D385;">E-mail</b></label>
+        <p id="err-email" style="color: red; display: none; font-style: bold;">:</p>
+        <input id="email" type="email" placeholder="placeholder@domain.com" name="email" required>
 
-        <label><b>Password</b></label>
-        <input type="password" placeholder="8 characters minimum" name="password" required>
+        <label><b id="b-username" style="color: #14D385;">Username</b></label>
+        <p id="err-username" style="color: red; display: none; font-style: bold;">:</p>
+        <input id="username" type="text" placeholder="harambe" name="username" required>
 
-        <button type="submit" style="background-color: #333;">Login</button>
-      </div>
+        <label><b id="b-password" style="color: #14D385;">Password</b></label>
+        <p id="err-password" style="color: red; display: none; font-style: bold;">:</p>
+        <input id="password" type="password" placeholder="8 characters minimum" name="password" required>
 
-      <div class="container" style="background-color:#f1f1f1">
-        <a href="/Camagru/public/home" ><button type="button" class="cancelbtn">Cancel</button></a>
-        <span class="psw">Forgot <a href="/Camagru/public/auth/reset">password?</a></span>
+        <button id="signup-button" type="submit" style="background-color: #333; font-family: 'Architects Daughter', cursive;">Sign me up!</button>
+        <div id="oauth">
+          <a href="/Camagru/public/auth/facebooksignup"><button id="facebook" style="font-family: 'Architects Daughter', cursive;" type="button">Facebook</button></a>
+          <a href="/Camagru/public/auth/googlesignup"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
+          <a href="/Camagru/public/auth/fourtytwosignup"><button id="fourty" style="font-family: 'Architects Daughter', cursive;" type="button">42</button></a>
+          <a href="/Camagru/public/auth/twittersignup"><button id="twitter" style="font-family: 'Architects Daughter', cursive;" type="button">Twitter</button></a>
+        </div>
       </div>
     </form>
 
@@ -191,19 +53,7 @@
 
     </footer>
 
-    <script>
-
-      function open_close()
-      {
-        var x = document.getElementById("myTopnav");
-
-        if (x.className === "topnav")
-          x.className += " responsive";
-        else
-          x.className = "topnav";
-      }
-
-    </script>
+    <script src="<?php echo SITE_URL; ?>/js/camagru.js"></script>
 
   </body>
 

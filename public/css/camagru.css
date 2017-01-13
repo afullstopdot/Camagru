@@ -1,10 +1,15 @@
 body
 {
   margin:0;
+  height: 100%;
+  background-image: url('http://wallpapers-and-backgrounds.net/wp-content/uploads/2016/01/photography-1080p-background_1_1280x720.jpg');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: 'Shadows Into Light', cursive;
 }
-
 /*Nav bar*/
-
 ul.topnav
 {
   list-style-type: none;
@@ -80,4 +85,137 @@ ul.topnav li.icon
     display: block;
     text-align: left;
   }
+}
+form
+{
+  border: 1px solid #f1f1f1;
+}
+
+input[type=text], input[type=password], input[type=email]
+{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button
+{
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.container
+{
+  padding: 16px;
+}
+
+span.psw
+{
+  float: right;
+  padding-top: 16px;
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px)
+{
+  span.psw
+  {
+    display: block;
+    float: none;
+  }
+  .cancelbtn
+  {
+     width: 100%;
+  }
+}
+#oauth
+{
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+#google
+{
+    width: 24%;
+    height: 45px;
+    display: ìnline;
+    background-color: #D70606;
+    border: none;
+    color: white;
+}
+#fourty
+{
+  width: 24%;
+  height: 45px;
+  display: ìnline;
+  background-color: #333;
+  border: none;
+  color: white;
+}
+
+#facebook
+{
+  width: 24%;
+  height: 45px;
+  display: ìnline;
+  background-color: #0642D7;
+  border: none;
+}
+
+#twitter
+{
+  width: 24%;
+  height: 45px;
+  display: ìnline;
+  background-color: #1356FD;
+  border: none;
+}
+
+ @media screen and (max-width:680px) {
+
+  #oauth
+  {
+    width: 100%;
+  }
+  #google
+  {
+    width: 48%;
+    height: 45px;
+    display: ìnline;
+    background-color: #D70606;
+    border: none;
+  }
+  #fourty
+  {
+    width: 48%;
+    height: 45px;
+    display: ìnline;
+    background-color: #333;
+    border: none;
+  }
+  #facebook
+  {
+    width: 48%;
+    height: 45px;
+    display: ìnline;
+    background-color: #0642D7;
+    border: none;
+  }
+  #twitter
+  {
+    width: 48%;
+    height: 45px;
+    display: ìnline;
+    background-color: #1356FD;
+    border: none;
+  }
+
 }
