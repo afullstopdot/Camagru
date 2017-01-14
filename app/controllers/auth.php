@@ -46,7 +46,22 @@ class auth extends Controller
 
   private function register_user($email, $username, $password)
   {
+    $response = $this->model('user')->reg_response($email, $username);
 
+    /*
+    ** function reg_response will return an array which will dictate below
+    ** whether to create a new account or not. regardless the response will
+    ** be returned so the javascript can update the user with how the registration
+    ** went
+    */
+
+    if ($response['username'] === 'OK' && $response['email'] === 'OK')
+    {
+      //add user to temp_users, send e-mail verification
+      $this->model('user')->create_temp_account($email, $username, $password);
+    }
+
+    echo json_encode ($response);
   }
 
   /*
@@ -60,7 +75,11 @@ class auth extends Controller
      && filter_has_var(INPUT_POST, 'username')
      && filter_has_var(INPUT_POST, 'password'))
     {
-      echo json_encode(array('name' => 'andre'));
+      $this->register_user(
+        trim(filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)),
+        trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING)),
+        trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING))
+      );
     }
     else
       $this->view('auth/signup', $params);

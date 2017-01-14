@@ -2,18 +2,18 @@
 
 class Controller
 {
+  private static $db;
   /*
   ** This function will create a new instance of a model
   ** return it and allow communication with the database
   */
-  public static $_db = NULL;
 
   protected function model($model)
   {
     if (file_exists('../app/models/' . $model . '.php'))
     {
       require_once '../app/models/' . $model . '.php';
-      return new $model();
+      return new $model(self::$db);
     }
     return NULL;
   }
@@ -30,4 +30,14 @@ class Controller
     }
   }
 
+  public static function getDB()
+  {
+    return self::$db;
+  }
+
+  public static function setDB($db)
+  {
+    if (isset($db))
+      self::$db = $db;
+  }
 }

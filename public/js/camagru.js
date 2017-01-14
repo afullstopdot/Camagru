@@ -17,16 +17,15 @@ window.onload = function () {
         form.addEventListener('submit', function (e) {
           /*
           ** validate_xxx functions check if input is valid and make changes to DOM
-          ** i call them twice, to update dom and show errors to user and also to then send form to server upon validation.
           */
-          validate_username(form.username.value);
-          validate_email(form.email.value);
-          validate_password(form.password.value);
+          var username_v = validate_username(form.username.value);
+          var email_v = validate_email(form.email.value);
+          var password_v = validate_password(form.password.value);
           /*
           ** if the form has been validated, we will communicate with the server, the server response will be
           ** if the username and/or email are in use already.
           */
-          if (validate_email(form.email.value) && validate_username(form.username.value) && validate_email(form.email.value) && validate_password(form.password.value)) {
+          if (username_v && email_v && password_v) {
             /*
             ** Update the btn text so the user knows whats happening, send the form via post and depending on the response
             ** update the button, the form input to show errors or show success and redirect user to home
@@ -84,9 +83,9 @@ function validate_username(username)
   var errors = [];
   var regexp = /^[a-zA-Z0-9_]+$/;
 
-  // length must be, 3+ letters
-  if (username.length < 2)
-    errors.push('Must be at least 2 characters.');
+  // length must be, > 2 & < 11 letters
+  if (username.length < 2 || username.length > 16)
+    errors.push('Must be between 3 - 15 characters.');
   // check if username only consists of a-zA-Z or underscore
   if (username.search(regexp) == -1)
     errors.push('Only alphanumeric characters and underscore allowed.');
