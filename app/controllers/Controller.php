@@ -2,6 +2,11 @@
 
 class Controller
 {
+  /*
+  ** This function will create a new instance of a model
+  ** return it and allow communication with the database
+  */
+
   protected function model($model)
   {
     if (file_exists('../app/models/' . $model . '.php'))
@@ -11,6 +16,10 @@ class Controller
     }
     return NULL;
   }
+
+  /*
+  ** This function will render a view, if it exists
+  */
 
   protected function view($view, $data = [])
   {

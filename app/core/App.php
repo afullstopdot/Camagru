@@ -1,14 +1,15 @@
 <?php
 
-/*
-**
-*/
-
 class App
 {
   protected $controller = 'home';
   protected $method = 'index';
   protected $params = [];
+
+  /*
+  ** Every request creates a new instance of this app, the constructor if applicable
+  ** adjusts the controller, method and view
+  */
 
   public function __construct()
   {
@@ -32,6 +33,7 @@ class App
     }
 
     $this->params = $url['params'] ? $url['params'] : [];
+    // call the function the client requested, or show default
     call_user_func_array([$this->controller, $this->method], $this->params);
   }
 
