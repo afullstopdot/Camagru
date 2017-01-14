@@ -6,6 +6,7 @@ class Controller
   ** This function will create a new instance of a model
   ** return it and allow communication with the database
   */
+  public static $_db = NULL;
 
   protected function model($model)
   {
@@ -28,4 +29,5 @@ class Controller
       require_once '../app/views/' . $view . '.php';
     }
   }
+
 }
