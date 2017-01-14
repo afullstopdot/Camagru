@@ -86,10 +86,6 @@ ul.topnav li.icon
     text-align: left;
   }
 }
-form
-{
-  border: 1px solid #f1f1f1;
-}
 
 input[type=text], input[type=password], input[type=email]
 {

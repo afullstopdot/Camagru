@@ -1,20 +1,50 @@
+/*
+** Because most of the communication on this website is asynchronous
+** the communication will be done using Ajax
+*/
+
 var url = 'http:\/\/localhost:80\/Camagru\/public\/';
 
 window.onload = function () {
     //Ajax registration
     var form = document.forms.namedItem('signup');
+    /*
+    ** The btn the user submits the form will be used to show progress
+    */
     var btn = document.getElementById('signup-button');
+
     if (form) {
         form.addEventListener('submit', function (e) {
-          if (validate_username(form.username.value) && validate_email(form.email.value) && validate_password(form.password.value)) {
-            btn.innerHTML = 'Creating account ...';
+          /*
+          ** validate_xxx functions check if input is valid and make changes to DOM
+          ** i call them twice, to update dom and show errors to user and also to then send form to server upon validation.
+          */
+          validate_username(form.username.value);
+          validate_email(form.email.value);
+          validate_password(form.password.value);
+          /*
+          ** if the form has been validated, we will communicate with the server, the server response will be
+          ** if the username and/or email are in use already.
+          */
+          if (validate_email(form.email.value) && validate_username(form.username.value) && validate_email(form.email.value) && validate_password(form.password.value)) {
+            /*
+            ** Update the btn text so the user knows whats happening, send the form via post and depending on the response
+            ** update the button, the form input to show errors or show success and redirect user to home
+            */
             var data = new FormData(form);
             var req = new XMLHttpRequest();
+
+            btn.innerHTML = 'Creating account ...';
 
             req.open('POST', url + 'auth/signup', true);
             req.onload = function (event) {
                 if (req.status == 200) {
+                  /*
+                  ** successful communication with server, inform user of success or error (if email is taken etc)
+                  ** every communication with the server will return a json string
+                  */
                   var result = JSON.parse(req.responseText);
+
                   console.log(result);
                   btn.innerHTML = 'Account created!';
                 } else {
@@ -22,15 +52,18 @@ window.onload = function () {
                   console.log('error communicating with camagru server.');
                 }
             };
-            req.send(data);
+            req.send(data);//send form
           }
-          e.preventDefault();
+          e.preventDefault();//prevent the form from redirecting after response
         }, false);
     }
 
 };
 
-// open and close nav bar for small screens
+/*
+** open and close nav bar for small screens
+*/
+
 function open_close()
 {
   var x = document.getElementById("myTopnav");
@@ -40,7 +73,12 @@ function open_close()
   else
     x.className = "topnav";
 }
-// validate username
+
+/*
+** validate username, the lenght must be atleast two characters
+** only alphanumeric and underscore allowed, else make changes to dom
+*/
+
 function validate_username(username)
 {
   var errors = [];
@@ -70,7 +108,12 @@ function validate_username(username)
     return true;
   }
 }
-// validate email
+
+/*
+** Validate email address, because the html one might not be what we want
+** and forms can be edited
+*/
+
 function validate_email(email)
 {
   var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -90,7 +133,11 @@ function validate_email(email)
     return true;
   }
 }
-// validate password
+
+/*
+** Validate the password, it must be atleast 8 characters.
+*/
+
 function validate_password(password)
 {
   if (password.length < 8)
