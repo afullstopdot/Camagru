@@ -3,6 +3,7 @@
 class Controller
 {
   private static $db;
+
   /*
   ** This function will create a new instance of a model
   ** return it and allow communication with the database

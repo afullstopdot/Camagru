@@ -58,10 +58,23 @@ class auth extends Controller
     if ($response['username'] === 'OK' && $response['email'] === 'OK')
     {
       //add user to temp_users, send e-mail verification
-      $this->model('user')->create_temp_account($email, $username, $password);
+      $result = $this->model('user')->create_temp_account($email, $username, $password);
+      if ($result === true)
+        echo json_encode(['error' => 'no errors.']);
+      else
+        echo json_encode($result);
     }
 
-    echo json_encode ($response);
+    // echo json_encode ($response);
+  }
+
+  /*
+  ** The verification email sent will be dealt with here
+  */
+
+  public function verify($params = [])
+  {
+    // make this a controller because for some reason only 1 param is being passed
   }
 
   /*

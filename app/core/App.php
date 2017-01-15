@@ -34,6 +34,7 @@ class App
 
     $this->params = $url['params'] ? $url['params'] : [];
     // call the function the client requested, or show default
+    print_r($this->params);die();
     call_user_func_array([$this->controller, $this->method], $this->params);
   }
 
@@ -50,7 +51,7 @@ class App
       return array(
         'controller' => $url[0],
         'method' => $url[1],
-        'params' => array_slice($url, 2)
+        'params' => array_slice($url, 1)
       );
     }
   }
