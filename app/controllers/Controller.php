@@ -31,14 +31,36 @@ class Controller
     }
   }
 
+  /*
+  ** Redirect users to home page
+  */
+
+  public function home()
+  {
+      header('Location: index.php');
+      exit();
+  }
+
+  /*
+  ** Because a instance of type controller is never instantiated, this function
+  ** can get the current pdo object db (static methods do not need an instance
+  ** to be called)
+  */
+
   public static function getDB()
   {
     return self::$db;
   }
+
+  /*
+  ** This function when called will assign an pdo obect to this controllers
+  ** db attribute, if i has not been set
+  */
 
   public static function setDB($db)
   {
     if (isset($db))
       self::$db = $db;
   }
+
 }

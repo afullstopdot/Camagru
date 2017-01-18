@@ -1,17 +1,21 @@
 <?php
 
 /*
-** Require all dependincies to create new instance
-** define values
-** set the timezone etc
+** Require all dependincies (if dependencies dont exist exit before crash)
+** to create new instance, also define values and set the timezone etc
 */
+
+session_start();
 
 require_once 'core/App.php';
 require_once 'controllers/Controller.php';
 require_once 'config/database.php';
 
 /*
-** Create pdo object, database, tables etc only if it hasnt been done.
+** Create pdo object and assign it to the controller class if it doesnt exist,
+** thus might be pointless because the state is never constant so a new pdo
+** object will be created because the controller pdo will not be set.
+** Create sql db and tables that this app depends on if they dont exist yet
 */
 
 try
@@ -31,5 +35,9 @@ catch (PDOException $e)
   echo 'Camagru Internal Server Error: ' . $e->getMessage();
   exit();
 }
+
+/*
+** define some variables i will be using often
+*/
 
 define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST'] . str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', dirname(__DIR__) . '/public')));

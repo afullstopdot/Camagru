@@ -20,6 +20,98 @@ class user
   }
 
   /*
+  ** This function will check if a email verification is valid
+  ** and return true or false respectiveley
+  */
+
+  public function check_verify($username, $verification)
+  {
+    if (isset($this->db) && isset($username) && isset($verification))
+    {
+      try
+      {
+
+        /*
+        ** if the sql statement is true, that means verification is valid
+        */
+
+        $stmt = $this->db->prepare(
+          'SELECT * FROM unverified_users
+           WHERE username = :username
+           AND verification = :verification'
+        );
+
+        $stmt->execute([
+          'username' => $username,
+          'verification' => $verification
+        ]);
+
+        /*
+        ** if the result of the exection is false that means verification failed
+        ** otherwise if true an array will be retrned containing the record
+        ** to be moved into the users table
+        */
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+      }
+      catch (PDOException $e)
+      {
+        return ['check_verify fail' => $e->getMessage()];
+      }
+    }
+  }
+
+  /*
+  ** this function will create a permanent user (post verification)
+  */
+
+  public function create_perm_account($email, $username, $password)
+  {
+    if (isset($email) && isset($username) && isset($password))
+    {
+      try
+      {
+        /*
+        ** Insert into perm users table
+        */
+
+        $stmt = $this->db->prepare(
+          'INSERT INTO users (email, username, password)
+           VALUES (:email, :username, :password)'
+        );
+
+        $stmt->execute([
+          'email' => $email,
+          'username' => $username,
+          'password' => $password
+        ]);
+
+        /*
+        ** Remove from unverified users after inserting into perm users
+        */
+
+        $stmt = $this->db->prepare(
+          'DELETE FROM unverified_users
+           WHERE username = :username
+           AND email = :email'
+        );
+
+        $stmt->execute([
+          'username' => $username,
+          'email' => $email
+        ]);
+
+        return true;
+      }
+      catch (PDOException $e)
+      {
+        // return ['create perm error' => $e->getMessage()];//debugging
+        return false;
+      }
+    }
+  }
+
+  /*
   ** This function will add a user to temp_users, send a verification email
   ** with a verificatio code
   */
@@ -28,7 +120,7 @@ class user
   {
     if (isset($email) && isset($username) && isset($password) && isset($this->db))
     {
-      $verification = hash('whirlpool', mt_rand(50, 100)); //check get for param limit
+      $verification = hash('whirlpool', mt_rand(50, 100));
 
       /*
       ** info to be used when e-mail for verification is sent.
@@ -53,13 +145,13 @@ class user
         $stmt->execute([
           'email' => $email,
           'username' => $username,
-          'password' => $password,
+          'password' => $this->password_hash($password),
           'verification' => $verification
         ]);
 
-        if ($this->send_mail($username, $email, $subject, $body_header, $body_button, $link) == false)
-          return ['create account error' => 'Failed to send mail.'];
-        return (true);
+        $this->send_mail($username, $email, $subject, $body_header, $body_button, $link);
+          // return ['create account error' => $link]; //temp because mail doesnt work on crrent machine
+        return ['mail error: link->' => $link]; //temp because mail doesnt work on crrent machine
       }
       catch (PDOException $e)
       {
@@ -71,35 +163,66 @@ class user
   /*
   ** This function will validate the username and e-mail (dont have any in the db)
   ** will return an array with list of errors if any.
-  ** This function will also do additional validation checks
   */
 
-  public function reg_response($email, $username)
+  public function validate_details($email, $username)
   {
     $response = [
       'email' => 'OK',
       'username' => 'OK'
     ];
 
-    if ($this->email_exists($email) == true)
+    if ($this->perm_email_exists($email) == true) {
       $response['email'] = 'The e-mail is taken already!';
-    if ($this->username_exists($username) == true)
+    }
+    if ($this->perm_username_exists($username) == true) {
       $response['username'] = 'The username is taken already!';
+    }
+    if ($this->temp_username_exists($username) == true) {
+      $response['username'] = 'Account pending verification!';
+    }
+    if ($this->temp_email_exists($email) == true) {
+      $response['email'] = 'Account pending verification!';
+    }
     return ($response);
   }
 
   /*
-  ** This function will check the db to see if the email is taken
+  ** This function will check the db to see if the username is taken (temp users)
   */
 
-  private function email_exists($email)
+  private function temp_username_exists($username)
   {
-    if ($email && isset($this->db))
+    if (isset($username) && isset($this->db))
     {
       try
       {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE email = :email');
-        $stmt->execute(array('email' => $email));
+        $stmt = $this->db->prepare('SELECT * FROM unverified_users WHERE username = :username');
+        $stmt->execute(['username' => $username]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result === false)
+          return (false);
+        return (true);
+      }
+      catch (PDOException $e)
+      {
+        return (['validate username error: ' => $e->getMessage()]);
+      }
+    }
+  }
+
+  /*
+  ** Thisn function will check the db to see if the email is taken (temp users)
+  */
+
+  private function temp_email_exists($email)
+  {
+    if (isset($email) && isset($this->db))
+    {
+      try
+      {
+        $stmt = $this->db->prepare('SELECT * FROM unverified_users WHERE email = :email');
+        $stmt->execute(['email' => $email]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result === false)
           return (false);
@@ -113,17 +236,41 @@ class user
   }
 
   /*
-  ** This function will check the db to see if the username is taken
+  ** This function will check the db to see if the email is taken (permm users)
   */
 
-  private function username_exists($username)
+  private function perm_email_exists($email)
+  {
+    if (isset($email) && isset($this->db))
+    {
+      try
+      {
+        $stmt = $this->db->prepare('SELECT * FROM users WHERE email = :email');
+        $stmt->execute(['email' => $email]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result === false)
+          return (false);
+        return (true);
+      }
+      catch (PDOException $e)
+      {
+        return (['validate email error: ' => $e->getMessage()]);
+      }
+    }
+  }
+
+  /*
+  ** This function will check the db to see if the username is taken (perm users)
+  */
+
+  private function perm_username_exists($username)
   {
     if (isset($username) && isset($this->db))
     {
       try
       {
         $stmt = $this->db->prepare('SELECT * FROM users WHERE username = :username');
-        $stmt->execute(array('username' => $username));
+        $stmt->execute(['username' => $username]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result === false)
           return (false);
@@ -134,6 +281,22 @@ class user
         return (['validate username error: ' => $e->getMessage()]);
       }
     }
+  }
+
+  /*
+  ** This is the function i will use to encrypt passwords in the db
+  ** break te password into an array hash each charcater using md5 and append it
+  ** to the final password, finally we hash the final.
+  */
+
+  private function password_hash($password)
+  {
+    $arr = str_split($password);
+
+    foreach ($arr as $key) {
+      $final .= md5($key);
+    }
+    return hash('whirlpool', $final);
   }
 
   /*

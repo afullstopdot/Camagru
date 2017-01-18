@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-
-<?php header('Content-Type: text/html'); ?>
 
 <html lang="en">
 
@@ -25,7 +22,7 @@
 
     </header>
 
-
+    <?php if (isset($_SESSION['flash']['message'])) { echo '<h1 style="text-align: center; color: gold;">' . $_SESSION['flash']['message'] . '</h1>'; } ?>
 
     <footer><p style="text-align: center; color: white;">developed by afullstopdot</p></footer>
 
