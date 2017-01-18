@@ -35,10 +35,17 @@ class Controller
   ** Redirect users to home page
   */
 
-  public function home()
+  protected function redirect($url = '')
   {
+    if ($url === '')
+    {
       header('Location: index.php');
-      exit();
+    }
+    else
+    {
+      header('Location: ' . $url);
+    }
+    exit;
   }
 
   /*
@@ -67,7 +74,7 @@ class Controller
   ** This function when called will send emails to the reciepients specified
   */
 
-  public function send_mail($recipient, $subject, $body, $html = false)
+  protected function send_mail($recipient, $subject, $body, $html = false)
   {
     /*
     ** When html is true, the email sent will be off type/html
@@ -82,7 +89,7 @@ class Controller
     }
     else
     {
-      $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . "\r\n" . 
+      $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . "\r\n" .
                  'X-Mailer: PHP/' . phpversion();
     }
     return mail($recipient, $subject, $body, $headers);

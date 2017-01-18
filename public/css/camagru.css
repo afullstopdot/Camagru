@@ -157,12 +157,12 @@ span.psw
   color: white;
 }
 
-#facebook
+#slack
 {
   width: 24%;
   height: 45px;
   display: ìnline;
-  background-color: #0642D7;
+  background-color: #7D1C44;
   border: none;
 }
 
@@ -197,12 +197,12 @@ span.psw
     background-color: #333;
     border: none;
   }
-  #facebook
+  #slack
   {
     width: 48%;
     height: 45px;
     display: ìnline;
-    background-color: #0642D7;
+    background-color: #7D1C44;
     border: none;
   }
   #twitter

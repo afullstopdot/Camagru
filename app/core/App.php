@@ -42,6 +42,7 @@ class App
     */
 
     call_user_func([$this->controller, $this->method], $this->params);
+
   }
 
   /*

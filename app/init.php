@@ -37,7 +37,15 @@ catch (PDOException $e)
 }
 
 /*
+** Set the timezone for johannesburg
+*/
+
+date_default_timezone_set('Africa/Johannesburg');
+
+/*
 ** define some variables i will be using often
 */
 
 define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST'] . str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', dirname(__DIR__) . '/public')));
+define('SLACK_AUTH', 'https://slack.com/oauth/authorize?');
+define('SLACK_ACCESS', 'https://slack.com/api/oauth.access');

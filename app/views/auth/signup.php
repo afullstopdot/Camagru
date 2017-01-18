@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<?php header('Content-Type: text/html'); ?>
 <html lang="en">
 
   <head>
@@ -39,10 +37,10 @@
 
         <button id="signup-button" type="submit" style="background-color: #333; font-family: 'Architects Daughter', cursive;">Sign me up!</button>
         <div id="oauth">
-          <a href="/Camagru/public/auth/facebooksignup"><button id="facebook" style="font-family: 'Architects Daughter', cursive;" type="button">Facebook</button></a>
-          <a href="/Camagru/public/auth/googlesignup"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
-          <a href="/Camagru/public/auth/fourtytwosignup"><button id="fourty" style="font-family: 'Architects Daughter', cursive;" type="button">42</button></a>
-          <a href="/Camagru/public/auth/twittersignup"><button id="twitter" style="font-family: 'Architects Daughter', cursive;" type="button">Twitter</button></a>
+          <a href="/Camagru/public/auth/slack/signup"><button id="slack" style="font-family: 'Architects Daughter', cursive;" type="button">Slack</button></a>
+          <a href="/Camagru/public/auth/google/signup"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
+          <a href="/Camagru/public/auth/fourtytwo/signup"><button id="fourty" style="font-family: 'Architects Daughter', cursive;" type="button">42</button></a>
+          <a href="/Camagru/public/auth/twitter/signup"><button id="twitter" style="font-family: 'Architects Daughter', cursive;" type="button">Twitter</button></a>
         </div>
       </div>
     </form>
