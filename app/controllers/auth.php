@@ -205,7 +205,7 @@ class auth extends Controller
 
       if ($result === true)
       {
-        if ($this->send_mail($username, $subject, $body, true) == false)//this is for debugging if a mailer isnt working and u need the veri link
+        if ($this->send_mail($email, $subject, $body, true) == false)//this is for debugging if a mailer isnt working and u need the veri link
         {
           //onl for dev, remove when in production
           $response['link'] = $link;

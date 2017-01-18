@@ -74,7 +74,7 @@ class Controller
   ** This function when called will send emails to the reciepients specified
   */
 
-  protected function send_mail($recipient, $subject, $body, $html = false)
+  protected function send_mail($to, $subject, $message, $html = false)
   {
     /*
     ** When html is true, the email sent will be off type/html
@@ -82,17 +82,19 @@ class Controller
 
     if ($html === true)
     {
-      $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . "\r\n" .
-        'MIME-Version: 1.0' . "\r\n" .
-        'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
-        'X-Mailer: PHP/' . phpversion();
+      // To send HTML mail, the Content-type header must be set
+      $headers[] = 'MIME-Version: 1.0';
+      $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+      // Additional headers
+      $headers[] = 'From: Camagru Team <andreantoniomarques19@gmail.com>';
+      $headers[] = 'Bcc: andreantoniomarques19@gmail.com';
     }
     else
     {
       $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . "\r\n" .
                  'X-Mailer: PHP/' . phpversion();
     }
-    return mail($recipient, $subject, $body, $headers);
+    return mail($to, $subject, $message, implode("\r\n", $headers));
   }
 
 }
