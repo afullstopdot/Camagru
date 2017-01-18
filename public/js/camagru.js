@@ -55,21 +55,26 @@ window.onload = function () {
                   var result = JSON.parse(req.responseText);
 
                   console.log(result); // if mailer not working i use this to get the link
-                  
-                  if (typeof result['email'] !== 'undefined' &&
-                      typeof result['username'] !== 'undefined')
+                  if (typeof result['error'] !== 'undefined')
                   {
-                    username_email_taken(result);
-                    if (result['email'] === 'OK' && result['username'] === 'OK')
-                      btn.innerHTML = 'Account created!';
-                    else
-                      btn.innerHTML = 'Unsuccessful!';
-                  }
+                      btn.innerHTML = 'ERROR!';
+                  } 
                   else {
-                    btn.innerHTML = 'Oops error!!';
+                    if (typeof result['email'] !== 'undefined' &&
+                        typeof result['username'] !== 'undefined')
+                    {
+                      username_email_taken(result);
+                      if (result['email'] === 'OK' && result['username'] === 'OK')
+                        btn.innerHTML = 'Account created!';
+                      else
+                        btn.innerHTML = 'Unsuccessful!';
+                    }
+                    else {
+                      btn.innerHTML = 'Oops error!!';
+                    }
                   }
-
-                } else {
+                } 
+                else {
                   btn.innerHTML = 'Oops error!';
                   console.log('error communicating with camagru server.');
                 }

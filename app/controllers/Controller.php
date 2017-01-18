@@ -63,4 +63,29 @@ class Controller
       self::$db = $db;
   }
 
+  /*
+  ** This function when called will send emails to the reciepients specified
+  */
+
+  public function send_mail($recipient, $subject, $body, $html = false)
+  {
+    /*
+    ** When html is true, the email sent will be off type/html
+    */
+
+    if ($html === true)
+    {
+      $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . "\r\n" .
+        'MIME-Version: 1.0' . "\r\n" .
+        'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
+        'X-Mailer: PHP/' . phpversion();
+    }
+    else
+    {
+      $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . "\r\n" . 
+                 'X-Mailer: PHP/' . phpversion();
+    }
+    return mail($recipient, $subject, $body, $headers);
+  }
+
 }

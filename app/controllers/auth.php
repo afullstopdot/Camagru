@@ -54,24 +54,40 @@ class auth extends Controller
     ** went
     */
 
-    $response = $this->model('user')->validate_details($email, $username);
-
+    $response = $this->model('user_signup')->validate_details($email, $username);
+   
     if ($response['username'] === 'OK' && $response['email'] === 'OK')
     {
       /*
       ** By this point its confirmed that the user can create an account
       ** since the username and email are available, we will tempoaraily add them
       ** and once they verify via email their account will be active.
-      ** create_temp_account will return false if the mail function failed to send
-      ** an email
+      ** create_temp_account will return false if the a pdo exception is thrown
       */
 
-      $result = $this->model('user')->create_temp_account($email, $username, $password);
+      $verification = hash('whirlpool', mt_rand(50, 100));
+      $link = SITE_URL . '/auth/verify/uid=' . base64_encode($username) . '/code=' . $verification;
+      
+      $subject = 'Camagru Account Verification';
+      $h3 = 'please verify your account';
+      $button = 'Verify!';
+      
+      $body = $this->get_html_str($h3, $button, $link, $username);
+      
+      $result = $this->model('user_signup')
+      ->create_temp_account($email, $username, $password, $verification);
 
-      if ($result == false)
-        echo json_encode(['status' => 'fail']);
+      if ($result === true)
+      {
+        if ($this->send_mail($username, $subject, $body, true))//this is for debugging if a mailer isnt working and u need the veri link
+        {
+          $response['link'] = $link;
+        }
+      }
       else
-        $response['link'] = $result;// only use if mailer not working and you need the ver link for debugging
+      {
+        $response['error'] = 'Failed to create account';
+      }
     }
     
     echo json_encode ($response);
@@ -152,5 +168,70 @@ class auth extends Controller
     }
     else
       $this->view('auth/signup', $params);
+  }
+
+  /*
+  ** These are functions that a url should not call.
+  **
+  ** This function will return an html formatted string for use by send_mail
+  ** the html code will be the same format the variables however will change
+  ** the header (verificaton or reset) the button (verification or reset) and
+  * the url (verification or reset)
+  */
+
+  private function get_html_str($h3, $button, $link, $username)
+  {
+    return '
+      <html>
+      <head>
+      <link href="https://fonts.googleapis.com/css?family=Josefin+Slab" rel="stylesheet">
+      <style>
+        body
+        {
+          font-family: "Josefin Slab", serif;;
+        }
+        .button
+            {
+                background-color: #4CAF50; /* Green */
+                width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+                border: none;
+                color: white;
+                padding: 16px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                -webkit-transition-duration: 0.4s; /* Safari */
+                transition-duration: 0.4s;
+                cursor: pointer;
+        }
+
+        .button1
+            {
+            background-color: white;
+            color: black;
+            border: 2px solid #4CAF50;
+        }
+
+            .button1:hover
+            {
+                background-color: #4CAF50;
+                color: white;
+            }
+      </style>
+      </head>
+      <body>
+
+      <h3 style="color: green; text-align: center;">Hello ' . $username . ', ' . $h3 . '</h3>
+      <p style="color: #333; font-style: bold; text-align: center;">This e-mail was sent automatically by Camagru, if you did not allow this, ignore this email.</p>
+      <a href="' . $link . '"><button class="button button1">' . $button . '</button></a>
+      <p style="color: red; font-style: bold; text-align: center;">If this button doesnt work, click this <a href="' . $link .'">link</a> or paste it in your browser</p>
+
+      </body>
+      </html>
+    ';
   }
 }
