@@ -165,10 +165,9 @@ class auth extends Controller
           {
 
             /*
-            ** Since this is oauth we will generate a username for the user by
-            ** concatenaing the first and last names, a username is limited to 15
-            ** characters so, splice the first name and last name if set. and
-            ** join them together. Passwords are not required
+            ** Since slack response will not contain a unique username
+            ** above we generate a username for the user.
+            ** Passwords are not required for oauth
             */
 
             if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A') === false)
