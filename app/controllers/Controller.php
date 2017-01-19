@@ -97,4 +97,18 @@ class Controller
     return mail($to, $subject, $message, implode("\r\n", $headers));
   }
 
+  /*
+  ** This function will update the flash variable in the session, to update users
+  ** if true flash_message can be used with a redirection aswell
+  */
+
+  protected function flash_message($message, $redirect = '')
+  {
+    $_SESSION['flash'] = ['message' => $message];
+
+    if ($redirect !== '')
+    {
+      $this->redirect($redirect);
+    }
+  }
 }

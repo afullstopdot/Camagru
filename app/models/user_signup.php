@@ -120,7 +120,7 @@ class user_signup
 
   public function create_temp_account($email, $username, $password, $veri)
   {
-    if (isset($email) && isset($username) && 
+    if (isset($email) && isset($username) &&
         isset($password) && isset($this->db) && isset($veri))
     {
       try
@@ -255,9 +255,13 @@ class user_signup
 
   /*
   ** This function will check the db to see if the username is taken (perm users)
+  ** i made this function as ooposed to the other helpers public, just because
+  ** some of our oauth registrations dont pass a unique username so i generate
+  ** one for the user, i want to check that the uniquely generated username
+  ** isnt taken and try again.
   */
 
-  private function perm_username_exists($username)
+  public function perm_username_exists($username)
   {
     if (isset($username) && isset($this->db))
     {

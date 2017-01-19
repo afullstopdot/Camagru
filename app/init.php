@@ -6,6 +6,7 @@
 */
 
 session_start();
+// session_destroy();die(); //for debugging
 
 require_once 'core/App.php';
 require_once 'controllers/Controller.php';
@@ -43,9 +44,11 @@ catch (PDOException $e)
 date_default_timezone_set('Africa/Johannesburg');
 
 /*
-** define some variables i will be using often
+** SITE_URL is the host
+** Vars prefixed with SLACK are the oauth api endpoints used in auth.php
 */
 
 define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST'] . str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', dirname(__DIR__) . '/public')));
 define('SLACK_AUTH', 'https://slack.com/oauth/authorize?');
 define('SLACK_ACCESS', 'https://slack.com/api/oauth.access');
+define('SLACK_PROFILE', 'https://slack.com/api/users.profile.get');

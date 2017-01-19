@@ -5,30 +5,20 @@ class auth extends Controller
 
   /*
   ** This function will authenticate a user, with use of slacks oauth
+  ** I do the oauth flow myself, therefore this function contains many lines of
+  ** code
   */
 
   public function slack($params = [])
   {
     $param = isset($params[0]) ? trim($params[0]) : NULL;
-
     if ($param === 'signup')
     {
 
-      /*
-      ** URL will be used to request an authorization code from slack if one has not been
-      ** made requested yet.
-      **
-      ** client_id - issued when you creat your app with slack(required)
-      ** scope - permissions to request from user (required)
-      ** redirect_uri - URL to redirect back to after auth (optional)
-      ** state - unique string to be passed back upon completion (optional)
-      */
-
-      $auth_url = SLACK_AUTH .
-      'client_id=' . '30219036481.128455242609&' .
-      'scope=' . 'identity.avatar&' .
-      'redirect=' . SITE_URL . '/auth/signup/slack&' .
-      'state=' . $this->get_scope(time() . random_int(0, 50));
+      if (isset($_GET['error']))
+      {
+        $this->flash_message('Oops slack error.', SITE_URL . '/auth/signup');
+      }
 
       /*
       ** If the user has authenticated with slack and granted the app permissions
@@ -40,7 +30,6 @@ class auth extends Controller
 
       if (isset($_GET['code']) && isset($_GET['state']))
       {
-
         /*
         ** As stated, if the state passed by slack and the state in the session
         ** dont match CSRF is happening and we must subsequently end our access
@@ -50,13 +39,13 @@ class auth extends Controller
         $post = 'client_id=30219036481.128455242609&' .
         'client_secret=3f1dc2dd6db5ba0113dfea80100f6b36&' .
         'code=' . $_GET['code'] . '&' .
-        'redirect_uri=' . '&';
+        'redirect_uri=' . SITE_URL . '/auth/slack/signup&';
 
-        if ($_GET['state'] !== $_SESSION['slack_scope'])
+        if ($_GET['state'] !== $_SESSION['slack_state'])
         {
 
           /*
-          ** Direct home.
+          ** redirect home.
           */
 
           $this->redirect();
@@ -71,17 +60,20 @@ class auth extends Controller
           */
 
           $headers = array();
-          $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+          $headers[] = 'Content-Type: application/x-www-form-urlencoded;';
 
           $curl = curl_init(SLACK_ACCESS);
-          curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-          curl_setopt($curl, CURLOPT_POST, 1);
-          curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
-          curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-          curl_setopt($curl, CURLOPT_HEADER, 0);
-          curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+          curl_setopt_array($curl, array(
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $post,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_HEADER => 0,
+            CURLOPT_RETURNTRANSFER => 1
+          ));
           $response = curl_exec($curl);
           curl_close($curl);
+
 
           /*
           ** Slacks response will be a json string, containing the access token
@@ -89,8 +81,7 @@ class auth extends Controller
           ** with a get param error.
           */
 
-          $response = json_decode($response);//continue from here, use access token to make reqest
-
+          $_SESSION['slack_access'] = json_decode($response, true);
 
         }
 
@@ -113,9 +104,133 @@ class auth extends Controller
         ** an account.
         */
 
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_RETURNTRANSFER => 1,
+          CURLOPT_URL => SLACK_PROFILE . '?token=' . $_SESSION['slack_access']['access_token']
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        $response = json_decode($response, true);
+
+        /*
+        ** slack response will container a ok field, true or false
+        */
+
+        if ($response['ok'] === true)
+        {
+          $profile = $response['profile'];
+
+          /*
+          ** Request was successful, pass thhe information to the user_signup
+          ** model, to create a permanent account.
+          */
+
+          $email = isset($profile['email']) ?
+            trim($profile['email']) : 'N/A';
+
+          $first_name = isset($profile['first_name']) ?
+            trim($profile['first_name']) : time();
+
+          $username = substr($first_name . '-' . time(), 0, 14);
+
+          /*
+          ** If by any chance the username we created specifically for this oauth
+          ** user is already taken, we will continue to try and make one.
+          */
+
+          while ($this->model('user_signup')->perm_username_exists($username) === true)
+          {
+            $username = substr($first_name . '-' . time(), 0, 14);
+          }
+
+          /*
+          ** check that the username and he email are not already registered
+          */
+
+          $validate = $this->model('user_signup')->validate_details(
+            $email,
+            $username
+          );
+
+          if ($validate['email'] !== 'OK')
+          {
+            $this->flash_message(
+              'Oops, this account is already registered!',
+              SITE_URL . '/auth/signup'
+            );
+          }
+          else
+          {
+
+            /*
+            ** Since this is oauth we will generate a username for the user by
+            ** concatenaing the first and last names, a username is limited to 15
+            ** characters so, splice the first name and last name if set. and
+            ** join them together. Passwords are not required
+            */
+
+            if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A') === false)
+            {
+
+              /*
+              ** If for some reason, a permanent account could not be created
+              ** update the user with information.
+              */
+
+              $this->flash_message(
+                'Oops, unsuccessfull registration.',
+                SITE_URL . '/auth/signup'
+              );
+            }
+            else
+            {
+
+              /*
+              ** At this point oauth is complete the user has been addeded to
+              ** our database.
+              */
+
+              $this->flash_message(
+                'Yayy, registered with slack.',
+                SITE_URL . '/auth/signup'
+              );
+
+            }
+          }
+
+        }
+        else
+        {
+          $this->flash_message(
+            'Oops, slack error 3-#~#a.',
+            SITE_URL . '/auth/signup'
+          );
+        }
+
       }
       else
       {
+
+        /*
+        ** URL will be used to request an authorization code from slack if one has not been
+        ** made requested yet.
+        **
+        ** client_id - issued when you creat your app with slack(required)
+        ** scope - permissions to request from user (required)
+        ** redirect_uri - URL to redirect back to after auth (optional)
+        ** state - unique string to be passed back upon completion (optional)
+        */
+
+        $_SESSION['slack_state'] = $this->get_scope(time() . rand(0, 121));
+
+        $auth_url = SLACK_AUTH .
+        'client_id=' . '30219036481.128455242609&' .
+        'scope=' . 'users.profile:read&' .
+        'redirect_uri=' . SITE_URL . '/auth/slack/signup&' .
+        'state=' . $_SESSION['slack_state'];
+
         /*
         ** This is where we redirect the user to slack auth page, and once they
         ** authorize the permissions, slack redirects back to the site with the
@@ -126,6 +241,8 @@ class auth extends Controller
       }
 
     }
+
+    $this->view('auth/signup');//disable when debugging
   }
 
   /*
@@ -162,62 +279,6 @@ class auth extends Controller
   public function login($params = [])
   {
     $this->view('auth/signin', $params);
-  }
-
-  /*
-  ** This function will check the db to see if the email or username is taken
-  ** if they are available, the users will be temporarily added as a user until
-  ** email validation.
-  */
-
-  private function register_user($email, $username, $password)
-  {
-
-    /*
-    ** function validate_details will return an array which will dictate below
-    ** whether to create a new account or not. regardless the response will
-    ** be returned so the clien can be updated with how the registration
-    ** went
-    */
-
-    $response = $this->model('user_signup')->validate_details($email, $username);
-
-    if ($response['username'] === 'OK' && $response['email'] === 'OK')
-    {
-      /*
-      ** By this point its confirmed that the user can create an account
-      ** since the username and email are available, we will tempoaraily add them
-      ** and once they verify via email their account will be active.
-      ** create_temp_account will return false if the a pdo exception is thrown
-      */
-
-      $verification = hash('whirlpool', mt_rand(50, 100));
-      $link = SITE_URL . '/auth/verify/uid=' . base64_encode($username) . '/code=' . $verification;
-
-      $subject = 'Camagru Account Verification';
-      $h3 = 'please verify your account';
-      $button = 'Verify!';
-
-      $body = $this->get_html_str($h3, $button, $link, $username);
-
-      $result = $this->model('user_signup')
-      ->create_temp_account($email, $username, $password, $verification);
-
-      if ($result === true)
-      {
-        if ($this->send_mail($email, $subject, $body, true) == false)//this is for debugging if a mailer isnt working and u need the veri link
-        {
-          //onl for dev, remove when in production
-          $response['link'] = $link;
-        }
-      }
-      else
-      {
-        $response['error'] = 'Failed to create account';
-      }
-    }
-
-    echo json_encode ($response);
   }
 
   /*
@@ -267,10 +328,10 @@ class auth extends Controller
           ** it.
           */
 
-          $_SESSION['flash'] = ['message' =>'Yayyy, account verification successful! log in.'];
-          $this->view('home/index');
-          if (isset($_SESSION['flash']))
-            unset($_SESSION['flash']);
+          $this->flash_message(
+            'Yayyy, account verification successful! log in.',
+            SITE_URL . '/home'
+          );
         }
       }
     }
@@ -298,8 +359,17 @@ class auth extends Controller
   }
 
   /*
-  ** These are functions that a url should not call.
-  **
+  ** This index function is for when users try to access urls that dont
+  ** exists. this is temporar until i create my own 404 page
+  */
+
+
+  public function index($params = [])
+  {
+    $this->flash_message('404 page not found', SITE_URL . '/home');
+  }
+
+  /*
   ** This function will return an html formatted string for use by send_mail
   ** the html code will be the same format the variables however will change
   ** the header (verificaton or reset) the button (verification or reset) and
@@ -377,4 +447,66 @@ class auth extends Controller
     }
     return hash('whirlpool', $final);
   }
+
+  /*
+  ** This function will check the db to see if the email or username is taken
+  ** if they are available, the users will be temporarily added as a user until
+  ** email validation.
+  */
+
+  private function register_user($email, $username, $password)
+  {
+
+    /*
+    ** function validate_details will return an array which will dictate below
+    ** whether to create a new account or not. regardless the response will
+    ** be returned so the clien can be updated with how the registration
+    ** went
+    */
+
+    $response = $this->model('user_signup')->validate_details($email, $username);
+
+    if ($response['username'] === 'OK' && $response['email'] === 'OK')
+    {
+      /*
+      ** By this point its confirmed that the user can create an account
+      ** since the username and email are available, we will tempoaraily add them
+      ** and once they verify via email their account will be active.
+      ** create_temp_account will return false if the a pdo exception is thrown
+      */
+
+      $verification = hash('whirlpool', mt_rand(50, 100));
+      $link = SITE_URL . '/auth/verify/uid=' . base64_encode($username) . '/code=' . $verification;
+
+      $subject = 'Camagru Account Verification';
+      $h3 = 'please verify your account';
+      $button = 'Verify!';
+
+      $body = $this->get_html_str($h3, $button, $link, $username);
+
+      $result = $this->model('user_signup')
+      ->create_temp_account($email, $username, $password, $verification);
+
+      if ($result === true)
+      {
+        if ($this->send_mail($email, $subject, $body, true) == false)//this is for debugging if a mailer isnt working and u need the veri link
+        {
+          //onl for dev, remove when in production
+          $response['link'] = $link;
+        }
+      }
+      else
+      {
+        $response['error'] = 'Failed to create account';
+      }
+    }
+
+    echo json_encode ($response);
+  }
+
+  /*
+  ** This index function is for when users try to access urls that dont
+  ** exists. this is temporar until i create my own 404 page
+  */
+
 }
