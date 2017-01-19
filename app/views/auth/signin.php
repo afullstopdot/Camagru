@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<?php header('Content-Type: text/html'); ?>
 <html lang="en">
 
   <head>
@@ -15,6 +13,7 @@
 
       <ul class="topnav" id="myTopnav">
         <li><a class="active" href="/Camagru/public/home" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
+        <li><a href="/Camagru/public/auth/reset">Reset Account</a></li>
         <?php if (isset($_SESSION['user'])) { echo '<li><a href="/Camagru/public/auth/logout">Log out</a></li>'; } ?>
         <li class="icon"><a href="javascript:void(0);" style="font-size:15px;" onclick="open_close()">☰</a></li>
       </ul>

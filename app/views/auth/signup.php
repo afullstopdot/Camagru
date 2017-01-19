@@ -24,20 +24,21 @@
 
     <form id="signup" name="signup" action="/Camagru/public/auth/signup" method="POST">
       <div class="container">
-        <h3 style="color: gold; text-align: center;">Sign Up to create, share & like pics!</h3>
-        <label><b id="b-email" style="color: #14D385;">E-mail</b></label>
+        <h3 class="info-text" style="color: gold; text-align: center;">Sign Up to create, share & like pics!</h3>
+        <label><b class="p-text" id="b-email" style="color: #14D385;">E-mail</b></label>
         <p id="err-email" style="color: red; display: none; font-style: bold;">:</p>
         <input id="email" type="email" placeholder="placeholder@domain.com" name="email" required>
 
-        <label><b id="b-username" style="color: #14D385;">Username</b></label>
+        <label><b class="p-text" id="b-username" style="color: #14D385;">Username</b></label>
         <p id="err-username" style="color: red; display: none; font-style: bold;">:</p>
         <input id="username" type="text" placeholder="harambe" name="username" required>
 
-        <label><b id="b-password" style="color: #14D385;">Password</b></label>
+        <label><b class="p-text" id="b-password" style="color: #14D385;">Password</b></label>
         <p id="err-password" style="color: red; display: none; font-style: bold;">:</p>
         <input id="password" type="password" placeholder="8 characters minimum" name="password" required>
 
         <button id="signup-button" type="submit" style="background-color: #333; font-family: 'Architects Daughter', cursive;">Sign me up!</button>
+        <fieldset id="leglin"><legend align="center"><p style="color: white;">or</p></legend></fieldset>
         <div id="oauth">
           <a href="/Camagru/public/auth/slack/signup"><button id="slack" style="font-family: 'Architects Daughter', cursive;" type="button">Slack</button></a>
           <a href="/Camagru/public/auth/google/signup"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
@@ -49,7 +50,7 @@
 
     <footer>
 
-      <p style="text-align: center; color: #333;">developed by afullstopdot</p>
+      <p class="p-text" style="text-align: center; color: #333;">developed by afullstopdot</p>
 
     </footer>
 

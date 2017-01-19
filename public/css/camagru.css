@@ -110,13 +110,33 @@ button
 
 .container
 {
-  padding: 16px;
+  width: 40%;
+  margin: auto;
+  padding: 5%;
+}
+
+.info-text
+{
+    font-size: 35px;
+}
+
+.p-text
+{
+    font-size: 20px;
 }
 
 span.psw
 {
   float: right;
   padding-top: 16px;
+}
+
+#leglin
+{
+	border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-color: white;
 }
 
 /* Change styles for span and cancel button on extra small screens */
@@ -140,7 +160,7 @@ span.psw
 }
 #google
 {
-    width: 24.5%;
+    width: 24%;
     height: 45px;
     display: ìnline;
     background-color: #D70606;
@@ -149,7 +169,7 @@ span.psw
 }
 #fourty
 {
-  width: 24.5%;
+  width: 24%;
   height: 45px;
   display: ìnline;
   background-color: #333;
@@ -159,7 +179,7 @@ span.psw
 
 #slack
 {
-  width: 24.5%;
+  width: 24%;
   height: 45px;
   display: ìnline;
   background-color: #7D1C44;
@@ -168,7 +188,7 @@ span.psw
 
 #twitter
 {
-  width: 24.5%;
+  width: 24%;
   height: 45px;
   display: ìnline;
   background-color: #1356FD;
@@ -177,6 +197,20 @@ span.psw
 
  @media screen and (max-width:680px) {
 
+  .container
+  {
+    width: 100%;
+    margin: auto;
+    padding: 16px;
+  }
+  .info-text
+  {
+      font-size: 18px;
+  }
+  .p-text
+  {
+      font-size: 19px;
+  }
   #oauth
   {
     width: 100%;
