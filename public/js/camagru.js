@@ -58,7 +58,7 @@ window.onload = function () {
                   if (typeof result['error'] !== 'undefined')
                   {
                       btn.innerHTML = 'ERROR!';
-                  } 
+                  }
                   else {
                     if (typeof result['email'] !== 'undefined' &&
                         typeof result['username'] !== 'undefined')
@@ -73,7 +73,7 @@ window.onload = function () {
                       btn.innerHTML = 'Oops error!!';
                     }
                   }
-                } 
+                }
                 else {
                   btn.innerHTML = 'Oops error!';
                   console.log('error communicating with camagru server.');
@@ -220,5 +220,20 @@ function username_email_taken(response)
     document.getElementById('b-username').style.color = "#14D385";
     document.getElementById('username').style.border = "2px solid green";
     document.getElementById('err-username').style.display = 'none';
+  }
+}
+
+/*
+** This functtion will open and close the alert divs
+*/
+
+var close = document.getElementsByClassName("alertclosebtn");
+var i;
+
+for (i = 0; i < close.length; i++) {
+  close[i].onclick = function(){
+    var div = this.parentElement;
+    div.style.opacity = "0";
+    setTimeout(function(){ div.style.display = "none"; }, 600);
   }
 }

@@ -102,9 +102,9 @@ class Controller
   ** if true flash_message can be used with a redirection aswell
   */
 
-  protected function flash_message($message, $redirect = '')
+  protected function flash_message($message, $alert, $redirect = '')
   {
-    $_SESSION['flash'] = ['message' => $message];
+    $_SESSION['flash'] = [$alert => $message];
 
     if ($redirect !== '')
     {

@@ -9,7 +9,7 @@ body
   background-size: cover;
   font-family: 'Shadows Into Light', cursive;
 }
-/*Nav bar*/
+
 ul.topnav
 {
   list-style-type: none;
@@ -45,119 +45,6 @@ ul.topnav li.icon
   display: none;
 }
 
-@media screen and (max-width:680px) {
-
-  ul.topnav li:not(:first-child)
-  {
-    display: none;
-  }
-
-  ul.topnav li.icon
-  {
-    float: right;
-    display: inline-block;
-  }
-
-}
-
-@media screen and (max-width:680px) {
-
-  ul.topnav.responsive
-  {
-    position: relative;
-  }
-
-  ul.topnav.responsive li.icon
-  {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-
-  ul.topnav.responsive li
-  {
-    float: none;
-    display: inline;
-  }
-
-  ul.topnav.responsive li a
-  {
-    display: block;
-    text-align: left;
-  }
-}
-
-input[type=text], input[type=password], input[type=email]
-{
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-button
-{
-  background-color: #4CAF50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-.container
-{
-  width: 40%;
-  margin: auto;
-  padding: 5%;
-}
-
-.info-text
-{
-    font-size: 35px;
-}
-
-.p-text
-{
-    font-size: 20px;
-}
-
-span.psw
-{
-  float: right;
-  padding-top: 16px;
-}
-
-#leglin
-{
-	border-left: none;
-    border-right: none;
-    border-bottom: none;
-    border-color: white;
-}
-
-/* Change styles for span and cancel button on extra small screens */
-@media screen and (max-width: 300px)
-{
-  span.psw
-  {
-    display: block;
-    float: none;
-  }
-  .cancelbtn
-  {
-     width: 100%;
-  }
-}
-#oauth
-{
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-}
 #google
 {
     width: 24%;
@@ -195,26 +82,116 @@ span.psw
   border: none;
 }
 
- @media screen and (max-width:680px) {
+#leglin
+{
+	border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-color: white;
+}
 
-  .container
+/*alert*/
+.alert {
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+    opacity: 1;
+    transition: opacity 0.6s;
+    margin-bottom: 15px;
+}
+.alert.success {background-color: #4CAF50;}
+.alert.info {background-color: #2196F3;}
+.alert.warning {background-color: #ff9800;}
+.alertclosebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.alertclosebtn:hover {
+    color: black;
+}
+
+input[type=text], input[type=password], input[type=email]
+{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button
+{
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.container
+{
+  padding: 10px;
+  width: 40%;
+  margin: auto;
+}
+
+span.psw
+{
+  float: right;
+  padding-top: 16px;
+}
+
+@media screen and (max-width:680px) {
+
+  ul.topnav li:not(:first-child)
   {
-    width: 100%;
-    margin: auto;
-    padding: 16px;
+    display: none;
   }
-  .info-text
+
+  ul.topnav li.icon
   {
-      font-size: 18px;
+    float: right;
+    display: inline-block;
   }
-  .p-text
+
+  ul.topnav.responsive
   {
-      font-size: 19px;
+    position: relative;
   }
+
+  ul.topnav.responsive li.icon
+  {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  ul.topnav.responsive li
+  {
+    float: none;
+    display: inline;
+  }
+
+  ul.topnav.responsive li a
+  {
+    display: block;
+    text-align: left;
+  }
+
   #oauth
   {
     width: 100%;
   }
+
   #google
   {
     width: 48%;
@@ -223,6 +200,7 @@ span.psw
     background-color: #D70606;
     border: none;
   }
+
   #fourty
   {
     width: 48%;
@@ -231,6 +209,7 @@ span.psw
     background-color: #333;
     border: none;
   }
+
   #slack
   {
     width: 48%;
@@ -239,6 +218,7 @@ span.psw
     background-color: #7D1C44;
     border: none;
   }
+
   #twitter
   {
     width: 48%;
@@ -247,5 +227,24 @@ span.psw
     background-color: #1356FD;
     border: none;
   }
+  .container
+  {
+    padding: 10px;
+    width: 95%;
+    margin: auto;
+  }
+}
 
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px)
+{
+  span.psw
+  {
+    display: block;
+    float: none;
+  }
+  .cancelbtn
+  {
+     width: 100%;
+  }
 }

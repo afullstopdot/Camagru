@@ -2,7 +2,6 @@
 
 class auth extends Controller
 {
-
   /*
   ** This function will authenticate a user, with use of slacks oauth
   ** I do the oauth flow myself, therefore this function contains many lines of
@@ -158,6 +157,7 @@ class auth extends Controller
           {
             $this->flash_message(
               'Oops, this account is already registered!',
+              'warning',
               SITE_URL . '/auth/signup'
             );
           }
@@ -180,6 +180,7 @@ class auth extends Controller
 
               $this->flash_message(
                 'Oops, unsuccessfull registration.',
+                'danger',
                 SITE_URL . '/auth/signup'
               );
             }
@@ -193,6 +194,7 @@ class auth extends Controller
 
               $this->flash_message(
                 'Yayy, registered with slack.',
+                'success',
                 SITE_URL . '/auth/signup'
               );
 
@@ -329,6 +331,7 @@ class auth extends Controller
 
           $this->flash_message(
             'Yayyy, account verification successful! log in.',
+            'success',
             SITE_URL . '/home'
           );
         }
@@ -365,7 +368,7 @@ class auth extends Controller
 
   public function index($params = [])
   {
-    $this->flash_message('404 page not found', SITE_URL . '/home');
+    $this->flash_message('404 page not found', 'danger', SITE_URL . '/home');
   }
 
   /*

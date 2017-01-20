@@ -20,7 +20,7 @@
 
     </header>
 
-    <?php if (isset($_SESSION['flash']['message'])) { echo '<h1 style="text-align: center; color: gold;">' . $_SESSION['flash']['message'] . '</h1>'; } ?>
+    <?php if (file_exists('../app/views/flash/flash.php')) { require_once '../app/views/flash/flash.php'; } else { echo '<h1>Could not load flash</h1>'; } ?>
 
     <form id="signup" name="signup" action="/Camagru/public/auth/signup" method="POST">
       <div class="container">
