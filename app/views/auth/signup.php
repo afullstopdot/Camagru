@@ -37,13 +37,13 @@
         <p id="err-password" style="color: red; display: none; font-style: bold;">:</p>
         <input id="password" type="password" placeholder="8 characters minimum" name="password" required>
 
-        <button id="signup-button" type="submit" style="background-color: #333; font-family: 'Architects Daughter', cursive;">Sign me up!</button>
+        <button id="signup-button" type="submit" style="background-color: #333; font-family: 'Architects Daughter', cursive;">Sign me up !</button>
         <fieldset id="leglin"><legend align="center"><p style="color: white;">or</p></legend></fieldset>
         <div id="oauth">
           <a href="/Camagru/public/auth/slack/signup"><button id="slack" style="font-family: 'Architects Daughter', cursive;" type="button">Slack</button></a>
           <a href="/Camagru/public/auth/google/signup"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
           <a href="/Camagru/public/auth/fourtytwo/signup"><button id="fourty" style="font-family: 'Architects Daughter', cursive;" type="button">42</button></a>
-          <a href="/Camagru/public/auth/twitter/signup"><button id="twitter" style="font-family: 'Architects Daughter', cursive;" type="button">Twitter</button></a>
+          <a href="/Camagru/public/auth/github/signup"><button id="github" style="font-family: 'Architects Daughter', cursive; color: black;" type="button">Github</button></a>
         </div>
       </div>
     </form>

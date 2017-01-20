@@ -2,6 +2,149 @@
 
 class auth extends Controller
 {
+
+  /*
+  ** This function will authenticate a user , with use of githubs oauth
+  ** i do the oauth flow myself, therefore there will be many lines of code,
+  ** prepare yourself LOLOLOL
+  */
+
+  public function github($params = [])
+  {
+    $param = isset($params[0]) ? trim($params[0]) : NULL;
+    if ($param === 'signup')
+    {
+
+      /*
+      ** After we make a request to github for an authorization token
+      ** we should recieve GET params code which we can than use to make an
+      ** access token request
+      */
+
+      if (isset($_GET['code']) && isset($_GET['state']))
+      {
+
+        /*
+        ** Use this authorization code to make an access token request
+        ** but first we must compare the state github returned with the redirect
+        ** and see if this is the same state we have. this is to protect againts
+        ** csrf
+        */
+
+        if ($_SESSION['github_state'] !== $_GET['state'])
+        {
+
+          /*
+          ** CRSF is happening, we must protect againts this now
+          */
+
+          $this->flash_message(
+            'Action not allowed',
+            'danger',
+            SITE_URL . '/public/auth/signup'
+          );
+
+        }
+        else
+        {
+
+          /*
+          ** All is well no csrf, proceed with access token request here.
+          */
+
+          $headers = array();
+          $headers[] = 'Content-Type: application/json;';
+          $post = 'client_id=1d711f901dab52485f87&' .
+          'client_secret=58716090a044daacc7734761ddf997478978cbe4&' .
+          'code=' . $_GET['code'] . '&' .
+          'redirect_uri=' . SITE_URL . '/auth/github/signup&' .
+          'state=' . $_SESSION['github_state'];
+
+          $curl = curl_init(GITHUB_ACCESS);
+          curl_setopt_array($curl, array(
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $post,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_HEADER => 0,
+            CURLOPT_RETURNTRANSFER => 1
+          ));
+          $response = curl_exec($curl);
+          curl_close($curl);
+
+
+
+          /*
+          ** The response by explicit request will return a json str with the
+          **access token, bearer and the scope
+          */
+
+          $_SESSION['github_access'] = json_decode($response, true);
+
+          // fix problem here, the post is not a success
+        }
+
+      }
+
+      /*
+      ** If we have an access_token token we can make request on behalf of the
+      ** user and ultimately get information we can use to register them, if
+      ** the access token is not set we must request the authorization code
+      */
+
+      if (isset($_SESSION['github_access']))
+      {
+
+        /*
+        ** Use this access token to make request to github about the user profile
+        ** then create an account for the user.
+        */
+
+
+      }
+      else
+      {
+
+        /*
+        ** If there is no access token we request one here, upon user verificaton
+        ** with github they will redirect the user here, the authorization code
+        ** will be caught right at the top, then the access token will be set
+        ** and this process will be complete.
+        */
+
+        $_SESSION['github_state'] = $this->get_scope(time() . rand(0, 121));
+
+        $auth_url = GITHUB_AUTH .
+              'client_id=1d711f901dab52485f87&' .
+              'redirect_uri=' . SITE_URL . '/auth/github/signup&' .
+              'scope=user&' .
+              'state=' . $_SESSION['github_state'];
+
+        /*
+        ** redirect the user to github authorization page
+        */
+
+        $this->redirect($auth_url);
+      }
+
+    }
+    else
+    {
+
+      /*
+      ** This method was called without an inteneded action, redirect to
+      ** signup and show error.
+      */
+
+      $this->flash_message(
+        '404 action not found',
+        'danger',
+        SITE_URL . '/public/auth/signup'
+      );
+
+    }
+  }
+
   /*
   ** This function will authenticate a user, with use of slacks oauth
   ** I do the oauth flow myself, therefore this function contains many lines of
@@ -16,7 +159,10 @@ class auth extends Controller
 
       if (isset($_GET['error']))
       {
-        $this->flash_message('Oops slack error.', SITE_URL . '/auth/signup');
+        $this->flash_message(
+          'Oops slack error.',
+          SITE_URL . '/auth/signup'
+        );
       }
 
       /*
@@ -198,6 +344,10 @@ class auth extends Controller
                 SITE_URL . '/auth/signup'
               );
 
+              /*
+              ** If for some reason you want to unset the access token, do it
+              ** here.
+              */
             }
           }
 

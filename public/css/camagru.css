@@ -73,12 +73,12 @@ ul.topnav li.icon
   border: none;
 }
 
-#twitter
+#github
 {
   width: 24%;
   height: 45px;
   display: ìnline;
-  background-color: #1356FD;
+  background-color: white;
   border: none;
 }
 
@@ -219,12 +219,12 @@ span.psw
     border: none;
   }
 
-  #twitter
+  #github
   {
     width: 48%;
     height: 45px;
     display: ìnline;
-    background-color: #1356FD;
+    background-color: white;
     border: none;
   }
   .container

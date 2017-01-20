@@ -49,6 +49,19 @@ date_default_timezone_set('Africa/Johannesburg');
 */
 
 define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST'] . str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', dirname(__DIR__) . '/public')));
+
+/*
+** These urls will be used for slacks oauth 2.0 web flow
+*/
+
 define('SLACK_AUTH', 'https://slack.com/oauth/authorize?');
 define('SLACK_ACCESS', 'https://slack.com/api/oauth.access');
 define('SLACK_PROFILE', 'https://slack.com/api/users.profile.get');
+
+/*
+** These urls will be used for githubs oauth 2.0 web flow
+*/
+
+define('GITHUB_AUTH', 'https://github.com/login/oauth/authorize?');
+define('GITHUB_ACCESS', 'https://github.com/login/oauth/access_token');
+// define('GITHUB_PROFILE', );
