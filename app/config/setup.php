@@ -11,6 +11,7 @@ $db->query(
     username varchar(16) NOT NULL,
     password text,
     admin int(11) UNSIGNED,
+    picture text,
     joined datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ');

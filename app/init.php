@@ -64,4 +64,5 @@ define('SLACK_PROFILE', 'https://slack.com/api/users.profile.get');
 
 define('GITHUB_AUTH', 'https://github.com/login/oauth/authorize?');
 define('GITHUB_ACCESS', 'https://github.com/login/oauth/access_token');
-// define('GITHUB_PROFILE', );
+define('GITHUB_PROFILE', 'https://api.github.com/user');
+define('GITHUB_EMAIL', 'https://api.github.com/user/emails');

@@ -67,7 +67,7 @@ class user_signup
   ** this function will create a permanent user (post verification)
   */
 
-  public function create_perm_account($email, $username, $password)
+  public function create_perm_account($email, $username, $password, $picture = 'N/A')
   {
     if (isset($email) && isset($username) && isset($password))
     {
@@ -78,14 +78,15 @@ class user_signup
         */
 
         $stmt = $this->db->prepare(
-          'INSERT INTO users (email, username, password)
-           VALUES (:email, :username, :password)'
+          'INSERT INTO users (email, username, password, picture)
+           VALUES (:email, :username, :password, :picture)'
         );
 
         $stmt->execute([
           'email' => $email,
           'username' => $username,
-          'password' => $password
+          'password' => $password,
+          'picture' => $picture
         ]);
 
         /*

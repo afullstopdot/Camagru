@@ -52,8 +52,6 @@ class auth extends Controller
           ** All is well no csrf, proceed with access token request here.
           */
 
-          $headers = array();
-          $headers[] = 'Content-Type: application/json;';
           $post = 'client_id=1d711f901dab52485f87&' .
           'client_secret=58716090a044daacc7734761ddf997478978cbe4&' .
           'code=' . $_GET['code'] . '&' .
@@ -62,7 +60,10 @@ class auth extends Controller
 
           $curl = curl_init(GITHUB_ACCESS);
           curl_setopt_array($curl, array(
-            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_HTTPHEADER => [
+              'Content-Type: application/x-www-form-urlencoded',
+              'Accept: application/json'
+            ],
             CURLOPT_POST => 1,
             CURLOPT_POSTFIELDS => $post,
             CURLOPT_FOLLOWLOCATION => 1,
@@ -80,8 +81,6 @@ class auth extends Controller
           */
 
           $_SESSION['github_access'] = json_decode($response, true);
-
-          // fix problem here, the post is not a success
         }
 
       }
@@ -99,8 +98,173 @@ class auth extends Controller
         ** Use this access token to make request to github about the user profile
         ** then create an account for the user.
         */
+        $curl = curl_init(GITHUB_PROFILE);
+        curl_setopt_array($curl, array(
+          CURLOPT_HTTPHEADER => [
+            'Content-Type: application/x-www-form-urlencoded',
+            'Accept: application/json',
+            'Authorization: token ' . $_SESSION['github_access']['access_token'],
+            'User-Agent: Camagru'
+          ],
+          CURLOPT_FOLLOWLOCATION => 1,
+          CURLOPT_HEADER => 0,
+          CURLOPT_RETURNTRANSFER => 1
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $response = json_decode($response, true);
 
+        /*
+        ** to get the users email we have to call a different endpoint
+        ** sigh ...
+        */
 
+        $curl = curl_init(GITHUB_EMAIL);
+        curl_setopt_array($curl, array(
+          CURLOPT_HTTPHEADER => [
+            'Content-Type: application/x-www-form-urlencoded',
+            'Accept: application/json',
+            'Authorization: token ' . $_SESSION['github_access']['access_token'],
+            'User-Agent: Camagru'
+          ],
+          CURLOPT_FOLLOWLOCATION => 1,
+          CURLOPT_HEADER => 0,
+          CURLOPT_RETURNTRANSFER => 1
+        ));
+        $response2 = curl_exec($curl);
+        curl_close($curl);
+        $response2 = json_decode($response2, true);
+
+        if (isset($response) && isset($response['login']))
+        {
+          /*
+          ** By this point a json string with the user info has been returned
+          ** lets use it now.
+          */
+
+          $email = isset($response2[0]['email']) ?
+            $response2[0]['email'] :
+            'N/A';
+
+          $username = isset($response['login']) ?
+            $response['login'] :
+            substr(time(), 0, 14);
+
+          $picture = isset($response['avatar_url']) ?
+            $response['avatar_url'] :
+            'N/A';
+
+          /*
+          ** If by any chance the username we created specifically for this oauth
+          ** user is already taken, we will continue to try and make one.
+          */
+
+          while ($this->model('user_signup')->perm_username_exists($username) === true)
+          {
+            $username = substr(isset($response['login']) ?
+              $response['login'] . time() :
+              time(), 0, 14);
+          }
+
+          /*
+          ** check that the username and he email are not already registered
+          */
+
+          $validate = $this->model('user_signup')->validate_details(
+            $email,
+            $username
+          );
+
+          /*
+          ** By this point, if the user is signing in check if the slack account
+          ** is valid and redirect home. Otherwise if its signup create the account.
+          */
+
+          if ($param === 'signin')
+          {
+            if ($validate['email'] !== 'OK' && $validate['email'] !== 'OK')
+            {
+              $this->flash_message(
+                'Yayy, you logged in',
+                'success',
+                SITE_URL . '/home'
+              );
+            }
+            else
+            {
+              $this->flash_message(
+                'Oops, Not an account. Create one <a href="' . SITE_URL . '/auth/signup">here</a>',
+                'warning',
+                SITE_URL . '/home'
+              );
+            }
+          }
+
+          /*
+          ** if the user is signing up, create account here
+          */
+
+          if ($validate['email'] !== 'OK')
+          {
+            $this->flash_message(
+              'Oops, this account is already registered!',
+              'warning',
+              SITE_URL . '/auth/signup'
+            );
+          }
+          else
+          {
+
+            /*
+            ** Since slack response will not contain a unique username
+            ** above we generate a username for the user.
+            ** Passwords are not required for oauth
+            */
+
+            if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A', $picture) === false)
+            {
+
+              /*
+              ** If for some reason, a permanent account could not be created
+              ** update the user with information.
+              */
+
+              $this->flash_message(
+                'Oops, unsuccessfull registration.',
+                'danger',
+                SITE_URL . '/auth/signup'
+              );
+            }
+            else
+            {
+              /*
+              ** At this point oauth is complete the user has been addeded to
+              ** our database.
+              */
+
+              $this->flash_message(
+                'Yayy, registered with slack.',
+                'success',
+                SITE_URL . '/auth/signup'
+              );
+
+              /*
+              ** If for some reason you want to unset the access token, do it
+              ** here.
+              */
+            }
+
+          }
+
+        }
+        else
+        {
+          $this->flash_message(
+            'Oops, github #err3.',
+            'danger',
+            SITE_URL . '/auth/signup'
+          );
+        }
       }
       else
       {
