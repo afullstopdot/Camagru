@@ -154,7 +154,7 @@ class auth extends Controller
   public function slack($params = [])
   {
     $param = isset($params[0]) ? trim($params[0]) : NULL;
-    if ($param === 'signup')
+    if ($param === 'signup' || $param === 'signin')
     {
 
       if (isset($_GET['error']))
@@ -298,6 +298,35 @@ class auth extends Controller
             $email,
             $username
           );
+
+          /*
+          ** By this point, if the user is signing in check if the slack account
+          ** is valid and redirect home. Otherwise if its signup create the account.
+          */
+
+          if ($param === 'signin')
+          {
+            if ($validate['email'] !== 'OK' && $validate['email'] !== 'OK')
+            {
+              $this->flash_message(
+                'Yayy, you logged in',
+                'success',
+                SITE_URL . '/home'
+              );
+            }
+            else
+            {
+              $this->flash_message(
+                'Oops, Not an account. Create one <a href="' . SITE_URL . '/auth/signup">here</a>',
+                'warning',
+                SITE_URL . '/home'
+              );
+            }
+          }
+
+          /*
+          ** check valid details and create acc
+          */
 
           if ($validate['email'] !== 'OK')
           {
