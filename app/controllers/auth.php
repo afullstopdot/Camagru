@@ -610,7 +610,6 @@ class auth extends Controller
 
   public function google($params = [])
   {
-    // session_destroy(); die();
     $param = isset($params[0]) ? trim($params[0]) : NULL;
     if ($param === 'signup' || $param === 'signin')
     {
@@ -702,6 +701,13 @@ class auth extends Controller
         $response = curl_exec($curl);
         curl_close($curl);
         $response = json_decode($response, true);
+
+        /*
+        ** I unset the access token so when it expires , our session isnt set
+        ** and therefore our requests fail cause an expired token is being used
+        */
+
+        unset($_SESSION['google_access']);
 
         if (isset($response) && !empty($response))
         {
@@ -1037,18 +1043,6 @@ class auth extends Controller
               );
             }
           }
-        }
-        else
-        {
-          /*
-          ** 42 resoonse was not what we expected
-          */
-
-          $this->flash_message(
-            'Ouath error #4',
-            'danger',
-            SITE_URL . '/auth/signup'
-          );
         }
 
       }
