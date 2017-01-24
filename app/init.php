@@ -66,3 +66,19 @@ define('GITHUB_AUTH', 'https://github.com/login/oauth/authorize?');
 define('GITHUB_ACCESS', 'https://github.com/login/oauth/access_token');
 define('GITHUB_PROFILE', 'https://api.github.com/user');
 define('GITHUB_EMAIL', 'https://api.github.com/user/emails');
+
+/*
+** These urls will be used for googles oauth 2.0 web flow
+*/
+
+define('GOOGLE_AUTH', 'https://accounts.google.com/o/oauth2/v2/auth?');
+define('GOOGLE_ACCESS', 'https://www.googleapis.com/oauth2/v4/token');
+define('GOOGLE_PROFILE', 'https://www.googleapis.com/plus/v1/people/me');
+
+/*
+** These urls will be used for 42s oauth 2.0 web flow
+*/
+
+define('E42_AUTH', 'https://api.intra.42.fr/oauth/authorize?');
+define('E42_ACCESS', 'https://api.intra.42.fr/oauth/token');
+define('E42_PROFILE', 'https://api.intra.42.fr/v2/me');

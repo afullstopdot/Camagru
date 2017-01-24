@@ -1,5 +1,10 @@
 <?php
 
+/*
+** Clean up notice, for thew oauth create a function to add the users
+** right now repition is used for each oauth strategy, fix before submition
+*/
+
 class auth extends Controller
 {
 
@@ -12,7 +17,7 @@ class auth extends Controller
   public function github($params = [])
   {
     $param = isset($params[0]) ? trim($params[0]) : NULL;
-    if ($param === 'signup')
+    if ($param === 'signup' || $param === 'signin')
     {
 
       /*
@@ -80,7 +85,10 @@ class auth extends Controller
           **access token, bearer and the scope
           */
 
-          $_SESSION['github_access'] = json_decode($response, true);
+          if (isset($response) && !empty($response))
+          {
+            $_SESSION['github_access'] = json_decode($response, true);
+          }
         }
 
       }
@@ -276,7 +284,7 @@ class auth extends Controller
         ** and this process will be complete.
         */
 
-        $_SESSION['github_state'] = $this->get_scope(time() . rand(0, 121));
+        $_SESSION['github_state'] = $this->get_state(time() . rand(0, 121));
 
         $auth_url = GITHUB_AUTH .
               'client_id=1d711f901dab52485f87&' .
@@ -390,7 +398,10 @@ class auth extends Controller
           ** with a get param error.
           */
 
-          $_SESSION['slack_access'] = json_decode($response, true);
+          if (isset($response) && !empty($response))
+          {
+            $_SESSION['slack_access'] = json_decode($response, true);
+          }
 
         }
 
@@ -443,6 +454,8 @@ class auth extends Controller
             trim($profile['first_name']) : time();
 
           $username = substr($first_name . '-' . time(), 0, 14);
+
+          $picture = $profile['image_24'];
 
           /*
           ** If by any chance the username we created specifically for this oauth
@@ -509,7 +522,7 @@ class auth extends Controller
             ** Passwords are not required for oauth
             */
 
-            if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A') === false)
+            if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A', $picture) === false)
             {
 
               /*
@@ -567,7 +580,7 @@ class auth extends Controller
         ** state - unique string to be passed back upon completion (optional)
         */
 
-        $_SESSION['slack_state'] = $this->get_scope(time() . rand(0, 121));
+        $_SESSION['slack_state'] = $this->get_state(time() . rand(0, 121));
 
         $auth_url = SLACK_AUTH .
         'client_id=' . '30219036481.128455242609&' .
@@ -590,21 +603,481 @@ class auth extends Controller
   }
 
   /*
-  ** Render view for google+ oauth
+  ** This function will authenticate a user. with the use of googles oauth
+  ** i do the oauth web flow myself, tyherefore this function contains many
+  ** lines of code.
   */
 
   public function google($params = [])
   {
-    $this->view('home/index', $params);
+    // session_destroy(); die();
+    $param = isset($params[0]) ? trim($params[0]) : NULL;
+    if ($param === 'signup' || $param === 'signin')
+    {
+
+      /*
+      ** After the user authenticates with google an authorization code is
+      ** passed with the redirect url and we can then use the auth code to
+      ** request an access token. if code hasnt been passed, and an access
+      ** token is not set then we make an request for an authoprization code
+      */
+
+      if (isset($_GET['code']) && isset($_GET['state']))
+      {
+
+        /*
+        ** use this authorization code to request aqn access token via a post
+        ** check for csrf aswell
+        */
+
+        if ($_SESSION['google_state'] === $_GET['state'])
+        {
+          $post = 'grant_type=authorization_code' .
+            '&client_id=942119260837-sacf9b6rnm7lfnjdd66a413qbtbo7l5q.apps.' .
+              'googleusercontent.com' .
+            '&client_secret=rsLWr-UfyzlIHAliK-z_cQeq' .
+            '&code=' . $_GET['code'] .
+            '&redirect_uri=' . SITE_URL . '/auth/google/signup';
+
+          $curl = curl_init(GOOGLE_ACCESS);
+          curl_setopt_array($curl, array(
+            CURLOPT_HTTPHEADER => [
+              'Content-Type: application/x-www-form-urlencoded'
+            ],
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $post,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_HEADER => 0,
+            CURLOPT_RETURNTRANSFER => 1
+          ));
+          $response = curl_exec($curl);
+          curl_close($curl);
+
+          $response = json_decode($response, true);
+
+          /*
+          ** check if an access token was recieved, then set the session.
+          */
+
+          if (isset($response) && !empty($response))
+          {
+            $_SESSION['google_access'] = $response['access_token'];
+          }
+        }
+        else
+        {
+          $this->flash_message(
+            'ILLEGAL Request',
+            'warning',
+            SITE_URL . '/auth/signup'
+          );
+        }
+
+      }
+
+      /*
+      ** if we recieved an authorization code already, it would have been used
+      ** to request an access token, therefore is there is no token set we must
+      ** now request an auth code. if an access token is set we make an api
+      ** request to google for basic user info
+      */
+
+      if (isset($_SESSION['google_access']))
+      {
+
+        /*
+        ** make api request for basic user info
+        */
+
+        $curl = curl_init(GOOGLE_PROFILE);
+        curl_setopt_array($curl, array(
+          CURLOPT_HTTPHEADER => [
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: Bearer ' . $_SESSION['google_access']
+          ],
+          CURLOPT_FOLLOWLOCATION => 1,
+          CURLOPT_HEADER => 0,
+          CURLOPT_RETURNTRANSFER => 1
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $response = json_decode($response, true);
+
+        if (isset($response) && !empty($response))
+        {
+
+          $username = isset($response['name']['givenName']) ?
+            $response['name']['givenName'] :
+            'N/A';
+          $username .= '-' . isset($response['id']) ?
+            $response['id'] :
+            'N/A';
+
+          $email = isset($response['emails'][0]['value']) ?
+            $response['emails'][0]['value'] :
+            'N/A';
+
+          /*
+          ** check that the username and he email are not already registered
+          */
+
+          $validate = $this->model('user_signup')->validate_details(
+            $email,
+            $username
+          );
+
+          /*
+          ** Use the information returned to either create or log a user in
+          */
+
+          if ($param === 'signin')
+          {
+            if ($validate['email'] !== 'OK' && $validate['email'] !== 'OK')
+            {
+              $this->flash_message(
+                'Yayy, you logged in',
+                'success',
+                SITE_URL . '/home'
+              );
+            }
+            else
+            {
+              $this->flash_message(
+                'Oops, Not an account. Create one <a href="' . SITE_URL . '/auth/signup">here</a>',
+                'warning',
+                SITE_URL . '/home'
+              );
+            }
+          }
+
+          /*
+          ** Create an account using the details. only if one doesnt exist
+          ** already
+          */
+
+          if ($validate['email'] !== 'OK')
+          {
+            $this->flash_message(
+              'Oops, this account is already registered!',
+              'warning',
+              SITE_URL . '/auth/signup'
+            );
+          }
+          else
+          {
+
+            if ($this->model('user_signup')->create_perm_account($email,
+              $username, 'N/A', $picture) === false)
+            {
+
+              /*
+              ** If for some reason, a permanent account could not be created
+              ** update the user with information.
+              */
+
+              $this->flash_message(
+                'Oops, unsuccessfull registration.',
+                'danger',
+                SITE_URL . '/auth/signup'
+              );
+            }
+            else
+            {
+              /*
+              ** At this point oauth is complete the user has been addeded to
+              ** our database.
+              */
+              $this->flash_message(
+                'Yayy, registered with google.',
+                'success',
+                SITE_URL . '/auth/signup'
+              );
+            }
+          }
+
+        }
+        else
+        {
+          $this->flash_message(
+            'Oops, Error reading your google profile',
+            'warning',
+            SITE_URL . '/auth/signup'
+          );
+        }
+      }
+      else
+      {
+
+        /*
+        ** request authentification code from gopogle
+        */
+
+        $_SESSION['google_state'] = $this->get_state(time() . rand(0, 121));
+        $auth_url = GOOGLE_AUTH .
+          'response_type=code' .
+          '&client_id=942119260837-sacf9b6rnm7lfnjdd66a413qbtbo7l5q.apps.googleusercontent.com' .
+          '&redirect_uri=' . SITE_URL . '/auth/google/signup' .
+          '&scope=profile email' .
+          '&state=' . $_SESSION['google_state'] .
+          '&prompt=consent  select_account';
+
+        $this->redirect($auth_url);
+      }
+    }
+    else
+    {
+      $this->flash_message(
+        '404 Action not found',
+        'danger',
+        SITE_URL . '/auth/signup'
+      );
+    }
   }
 
   /*
-  ** Render view for 42 oauth
+  ** This function will authenticate a user, with the use of Ecole42s oauth
+  ** I do the oauth web flow myself, therefore this function contains many lines
+  ** of code.
+  **
   */
 
   public function fourtytwo($params = [])
   {
-    $this->view('home/index', $params);
+    $param = isset($params[0]) ? trim($params[0]) : NULL;
+    if ($param === 'signup' || $param === 'signin')
+    {
+
+      /*
+      ** check if auth code has been returned by 42, otherwise request one if
+      ** no access token has been set in the session.
+      */
+
+      if (isset($_GET['code']) && isset($_GET['state']))
+      {
+
+        /*
+        ** request for an access token using the auth code, also check for csrf
+        */
+
+
+        if ($_SESSION['42_state'] === $_GET['state'])
+        {
+
+          /*
+          ** No csrf happening, we can now request an access token from 42
+          */
+
+          $post = 'grant_type=authorization_code&' .
+          'client_id=cab518e7dc16f4b40d2d49277e6fe1f0d633e5f4b65d3a82f3' .
+            '081b36fd7a1e3c&' .
+          'client_secret=748e1f88fb4c4ccd0623d21f80f11b6f9d771463847529' .
+            'e7718c06c604b26e93&' .
+          'code=' . $_GET['code'] . '&' .
+          'redirect_uri=' . SITE_URL . '/auth/fourtytwo/signup&' .
+          'state=' . $_SESSION['42_state'];
+          $curl = curl_init(E42_ACCESS);
+          curl_setopt_array($curl, array(
+            CURLOPT_HTTPHEADER => [
+              'Content-Type: application/x-www-form-urlencoded',
+              'Accept: application/json'
+            ],
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $post,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_HEADER => 0,
+            CURLOPT_RETURNTRANSFER => 1
+          ));
+          $response = curl_exec($curl);
+          curl_close($curl);
+
+          $response = json_decode($response, true);
+
+          if (isset($response['error']) && !empty($response['error']))
+          {
+            $this->flash_message(
+              'Ouath failed #3',
+              'danger',
+              SITE_URL . '/auth/signup'
+            );
+          }
+          else
+          {
+            $_SESSION['42_access'] = $response['access_token'];
+          }
+
+        }
+        else
+        {
+          $this->flash_message(
+            'ILLEGAL Request',
+            'warning',
+            SITE_URL . '/auth/signup'
+          );
+        }
+
+      }
+
+      /*
+      ** if an access token exists, use it to make a api request, if it doesnt
+      ** then request5 an auth code to be used above for an access token request
+      */
+
+      if (isset($_SESSION['42_access']))
+      {
+
+        /*
+        ** use access token to make request for basic user info
+        */
+
+        $curl = curl_init(E42_PROFILE);
+        curl_setopt_array($curl, array(
+          CURLOPT_HTTPHEADER => [
+            'Content-Type: application/x-www-form-urlencoded',
+            'Accept: application/json',
+            'Authorization: Bearer ' . $_SESSION['42_access']
+          ],
+          CURLOPT_FOLLOWLOCATION => 1,
+          CURLOPT_HEADER => 0,
+          CURLOPT_RETURNTRANSFER => 1
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $response = json_decode($response, true);
+
+        if (isset($response['id']) && !empty($response['id']))
+        {
+
+          /*
+          ** use the response to create an account or log the user in
+          */
+
+          $email = isset($response['email']) ?
+              $response['email'] :
+              'N/A';
+          $username = isset($response['login']) ?
+              $response['login'] :
+              'N/A';
+          $picture = isset($response['image_url']) ?
+              $response['image_url'] :
+              'N/A';
+
+          /*
+          ** Check if these details exist in the db then proceed to create or
+          ** log the user in.
+          */
+
+          $validate = $this->model('user_signup')->validate_details(
+            $email,
+            $username
+          );
+
+          /*
+          ** By this point, if the user is signing in check if the slack account
+          ** is valid and redirect home. Otherwise if its signup create the account.
+          */
+          if ($param === 'signin')
+          {
+            if ($validate['email'] !== 'OK' && $validate['email'] !== 'OK')
+            {
+              $this->flash_message(
+                'Yayy, you logged in',
+                'success',
+                SITE_URL . '/home'
+              );
+            }
+            else
+            {
+              $this->flash_message(
+                'Oops, Not an account. Create one <a href="' . SITE_URL . '/auth/signup">here</a>',
+                'warning',
+                SITE_URL . '/home'
+              );
+            }
+          }
+          /*
+          ** if the user is signing up, create account here
+          */
+          if ($validate['email'] !== 'OK')
+          {
+            $this->flash_message(
+              'Oops, this account is already registered!',
+              'warning',
+              SITE_URL . '/auth/signup'
+            );
+          }
+          else
+          {
+            /*
+            ** Since slack response will not contain a unique username
+            ** above we generate a username for the user.
+            ** Passwords are not required for oauth
+            */
+            if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A', $picture) === false)
+            {
+              /*
+              ** If for some reason, a permanent account could not be created
+              ** update the user with information.
+              */
+              $this->flash_message(
+                'Oops, unsuccessfull registration.',
+                'danger',
+                SITE_URL . '/auth/signup'
+              );
+            }
+            else
+            {
+              /*
+              ** At this point oauth is complete the user has been addeded to
+              ** our database.
+              */
+              $this->flash_message(
+                'Yayy, registered with 42.',
+                'success',
+                SITE_URL . '/auth/signup'
+              );
+            }
+          }
+        }
+        else
+        {
+          /*
+          ** 42 resoonse was not what we expected
+          */
+
+          $this->flash_message(
+            'Ouath error #4',
+            'danger',
+            SITE_URL . '/auth/signup'
+          );
+        }
+
+      }
+      else
+      {
+
+        /*
+        ** request authorization code
+        */
+
+        $_SESSION['42_state'] = $this->get_state(time() . rand(0, 121));
+        $auth_url = E42_AUTH .
+          'client_id=cab518e7dc16f4b40d2d49277e6fe1f0d633e5f4b65d3a82f3081b36fd7a1e3c' .
+          '&redirect_uri=' . SITE_URL . '/auth/fourtytwo/signup' .
+          '&response_type=code&scope=public' .
+          '&state=' . $_SESSION['42_state'];
+
+        $this->redirect($auth_url);
+      }
+
+    }
+    else
+    {
+      $this->flash_message(
+        '404 Action not found',
+        'danger',
+        SITE_URL . '/auth/signup'
+      );
+    }
   }
 
   /*
@@ -783,7 +1256,7 @@ class auth extends Controller
   ** currently authenticating and checking it when oauth completes
   */
 
-  private function get_scope($randomm_int)
+  private function get_state($randomm_int)
   {
     $arr = str_split(base64_encode($randomm_int));
 
