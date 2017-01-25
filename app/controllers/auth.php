@@ -1108,6 +1108,7 @@ class auth extends Controller
 
   public function verify($params = [])
   {
+
     /*
     ** clean up the params so uid and ver have hash values only, this is done by
     ** exploding the strs by delim = because the format of the params is uid=???
@@ -1154,6 +1155,23 @@ class auth extends Controller
           );
         }
       }
+      else
+      {
+        $this->flash_message(
+          'Oops, invalid or expired token! Create an account
+            <a href="' . SITE_URL . '/auth/signup' . '">here</a>',
+          'warning',
+          SITE_URL . '/home'
+        );
+      }
+    }
+    else
+    {
+      $this->flash_message(
+        'Oops, you have no business being here!',
+        'danger',
+        SITE_URL . '/home'
+      );
     }
   }
 
@@ -1186,7 +1204,10 @@ class auth extends Controller
 
   public function index($params = [])
   {
-    $this->flash_message('404 page not found', 'danger', SITE_URL . '/home');
+    $this->flash_message(
+      '404 page not found',
+      'danger',
+      SITE_URL . '/auth/signup');
   }
 
   /*

@@ -50,7 +50,7 @@
 
     <footer>
 
-      <p class="p-text" style="text-align: center; color: #333;">developed by afullstopdot</p>
+      <p class="p-text" style="text-align: center; color: white;">developed by afullstopdot</p>
 
     </footer>
 

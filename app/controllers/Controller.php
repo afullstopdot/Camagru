@@ -91,7 +91,8 @@ class Controller
     }
     else
     {
-      $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . "\r\n" .
+      $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' .
+                    "\r\n" .
                  'X-Mailer: PHP/' . phpversion();
     }
     return mail($to, $subject, $message, implode("\r\n", $headers));

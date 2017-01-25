@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<?php header('Content-Type: text/html'); ?>
 <html lang="en">
 
   <head>
@@ -29,17 +27,12 @@
 
         <button type="submit" style="background-color: #333;">Login</button>
       </div>
-
-      <div class="container" style="background-color:#f1f1f1">
-        <a href="/Camagru/public/home" ><button type="button" class="cancelbtn">Cancel</button></a>
-        <span class="psw">Forgot <a href="/Camagru/public/auth/reset">password?</a></span>
-      </div>
     </form>
 
     <footer><p style="text-align: center; color: #333;">developed by afullstopdot</p></footer>
 
     <script src="<?php echo SITE_URL; ?>/js/camagru.js"></script>
-    
+
   </body>
 
 </html>

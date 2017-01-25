@@ -45,18 +45,23 @@ ul.topnav li.icon
   display: none;
 }
 
+#oauth
+{
+  width: 100%;
+}
+
 #google
 {
-    width: 24%;
-    height: 45px;
-    display: ìnline;
-    background-color: #D70606;
-    border: none;
-    color: white;
+  width: 23.5%;
+  height: 45px;
+  display: ìnline;
+  background-color: #D70606;
+  border: none;
+  color: white;
 }
 #fourty
 {
-  width: 24%;
+  width: 23.5%;
   height: 45px;
   display: ìnline;
   background-color: #333;
@@ -66,7 +71,7 @@ ul.topnav li.icon
 
 #slack
 {
-  width: 24%;
+  width: 23.5%;
   height: 45px;
   display: ìnline;
   background-color: #7D1C44;
@@ -75,7 +80,7 @@ ul.topnav li.icon
 
 #github
 {
-  width: 24%;
+  width: 23.5%;
   height: 45px;
   display: ìnline;
   background-color: white;
@@ -85,9 +90,9 @@ ul.topnav li.icon
 #leglin
 {
 	border-left: none;
-    border-right: none;
-    border-bottom: none;
-    border-color: white;
+  border-right: none;
+  border-bottom: none;
+  border-color: white;
 }
 
 /*alert*/
