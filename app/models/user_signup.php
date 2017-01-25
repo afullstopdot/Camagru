@@ -1,5 +1,8 @@
 <?php
 
+require_once 'Model.php';
+
+
 /*
 ** This model will interact with db_camagru | users & temp_users
 ** This model will be used for user signup interaction with db

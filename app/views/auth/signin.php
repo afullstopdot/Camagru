@@ -35,7 +35,7 @@
         <p id="err-password" style="color: red; display: none; font-style: bold;">:</p>
         <input id="password" type="password" placeholder="your secret password" name="password" required>
 
-        <button id="signup-button" type="submit" style="background-color: #333; font-family: 'Architects Daughter', cursive;">Log me in !</button>
+        <button id="signin-button" type="submit" style="background-color: #333; font-family: 'Architects Daughter', cursive;">Log me in !</button>
         <fieldset id="leglin"><legend align="center"><p style="color: white;">or</p></legend></fieldset>
         <div id="oauth">
           <a href="/Camagru/public/auth/slack/signin"><button id="slack" style="font-family: 'Architects Daughter', cursive;" type="button">Slack</button></a>

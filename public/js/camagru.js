@@ -8,12 +8,14 @@ var url = 'http:\/\/localhost:80\/Camagru\/public\/';
 window.onload = function () {
     //Ajax registration
     var form = document.forms.namedItem('signup');
+    var login = document.forms.namedItem('signin');
 
     /*
     ** The btn the user submits the form will be used to show progress
     */
 
     var btn = document.getElementById('signup-button');
+    var login_btn = document.getElementById('signin-button');
 
     if (form) {
         form.addEventListener('submit', function (e) {
@@ -57,7 +59,7 @@ window.onload = function () {
                   console.log(result); // if mailer not working i use this to get the link
                   if (typeof result['error'] !== 'undefined')
                   {
-                      btn.innerHTML = 'ERROR!';
+                      btn.innerHTML = 'Oops, Invalid details!';
                   }
                   else {
                     if (typeof result['email'] !== 'undefined' &&
@@ -85,6 +87,75 @@ window.onload = function () {
         }, false);
     }
 
+    //log in registration
+    if (login)
+    {
+      login.addEventListener('submit', function (e) {
+
+        /*
+        ** validate_xxx functions check if input is valid and make changes to DOM
+        */
+
+        var email_v = validate_email(login.email.value);
+        var password_v = validate_password(login.password.value);
+
+        /*
+        ** if the form has been validated, we will communicate with the server, the server response will be
+        ** if the username and/or email are in use already.
+        */
+
+        if (email_v && password_v) {
+
+          /*
+          ** Update the btn text so the user knows whats happening, send the form via post and depending on the response
+          ** update the button, the form input to show errors or show success and redirect user to home
+          */
+
+          var data = new FormData(login);
+          var req = new XMLHttpRequest();
+
+          login_btn.innerHTML = 'Authenticating ...';
+
+          req.open('POST', url + 'auth/login', true);
+          req.onload = function (event) {
+              if (req.status == 200)
+              {
+
+                var result = JSON.parse(req.responseText);
+
+                /*
+                ** The response from camagru will be either error with a message
+                ** or success with a message
+                */
+
+                if (typeof result['error'] !== 'undefined')
+                {
+                  login_btn.innerHTML = 'ERROR!';
+                }
+                else if (typeof result['success'] !== 'undefined')
+                {
+                  login_btn.innerHTML = 'Success, redirecting ...!';
+                  window.location = url + 'home';
+                }
+
+              }
+              else
+              {
+
+                /*
+                ** The response from camagru was not okay
+                */
+
+                //console.log(req.status); //for debuggin
+                login_btn.innerHTML = 'Oops camagru error!';
+              }
+          };
+          req.send(data);//send form
+        }
+        e.preventDefault();//prevent the form from redirecting after response
+      }, false);
+    }
+    //end of onload
 };
 
 /*

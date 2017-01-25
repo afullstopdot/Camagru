@@ -1092,12 +1092,60 @@ class auth extends Controller
   }
 
   /*
-  ** Render view for login
+  ** login is done asynchronously, so after authentication a json response
+  ** is returned for the user
   */
 
   public function login($params = [])
   {
-    $this->view('auth/signin', $params);
+    if (filter_has_var(INPUT_POST, 'email')
+     && filter_has_var(INPUT_POST, 'password'))
+    {
+      $auth = $this->model('user_signin')->authenticate(
+        trim(filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)),
+        trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING))
+      );
+
+      if ($auth === false)
+      {
+
+        /*
+        ** The user information is invalid
+        */
+
+        echo json_encode(['error' => 'Invalid username']);
+      }
+      else
+      {
+
+        /*
+        ** the user information is valid, we create the users session var
+        ** and redirect home
+        */
+
+        $_SESSION['user'] = $auth;
+        if (isset($_SESSION['user']))
+        {
+          echo json_encode(['success' => 'Authentification Success!']);
+        }
+      }
+    }
+    else
+      $this->view('auth/signin', $params);
+  }
+
+  /*
+  ** This function will log a user out.
+  */
+
+  public function logout($params = [])
+  {
+    session_destroy();
+    $this->flash_message(
+      'Yayy, successfully logged out!',
+      'success',
+      SITE_URL
+    );
   }
 
   /*
@@ -1121,10 +1169,10 @@ class auth extends Controller
 
     if (isset($uid) && isset($ver))
     {
-      if (($result = $this->model('user')
+      if (($result = $this->model('user_signup')
       ->check_verify(base64_decode($uid), $ver)) !== false)
       {
-        if (($this->model('user')
+        if (($this->model('user_signup')
         ->create_perm_account(
           $result['email'],
           $result['username'],
