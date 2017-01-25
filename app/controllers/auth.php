@@ -167,7 +167,8 @@ class auth extends Controller
           ** user is already taken, we will continue to try and make one.
           */
 
-          while ($this->model('user_signup')->perm_username_exists($username) === true)
+          while ($this->model('user_signup')->
+          perm_username_exists($username) === true)
           {
             $username = substr(isset($response['login']) ?
               $response['login'] . time() :
@@ -201,7 +202,8 @@ class auth extends Controller
             else
             {
               $this->flash_message(
-                'Oops, Not an account. Create one <a href="' . SITE_URL . '/auth/signup">here</a>',
+                'Oops, Not an account. Create one <a href="' .
+                  SITE_URL . '/auth/signup">here</a>',
                 'warning',
                 SITE_URL . '/home'
               );
@@ -229,7 +231,8 @@ class auth extends Controller
             ** Passwords are not required for oauth
             */
 
-            if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A', $picture) === false)
+            if ($this->model('user_signup')->
+            create_perm_account($email, $username, 'N/A', $picture) === false)
             {
 
               /*
@@ -251,7 +254,7 @@ class auth extends Controller
               */
 
               $this->flash_message(
-                'Yayy, registered with slack.',
+                'Yayy, registered with github.',
                 'success',
                 SITE_URL . '/auth/signup'
               );
@@ -427,7 +430,8 @@ class auth extends Controller
         $curl = curl_init();
         curl_setopt_array($curl, array(
           CURLOPT_RETURNTRANSFER => 1,
-          CURLOPT_URL => SLACK_PROFILE . '?token=' . $_SESSION['slack_access']['access_token']
+          CURLOPT_URL => SLACK_PROFILE . '?token=' .
+            $_SESSION['slack_access']['access_token']
         ));
         $response = curl_exec($curl);
         curl_close($curl);
@@ -462,7 +466,8 @@ class auth extends Controller
           ** user is already taken, we will continue to try and make one.
           */
 
-          while ($this->model('user_signup')->perm_username_exists($username) === true)
+          while ($this->model('user_signup')->
+                  perm_username_exists($username) === true)
           {
             $username = substr($first_name . '-' . time(), 0, 14);
           }
@@ -494,7 +499,8 @@ class auth extends Controller
             else
             {
               $this->flash_message(
-                'Oops, Not an account. Create one <a href="' . SITE_URL . '/auth/signup">here</a>',
+                'Oops, Not an account. Create one <a href="' .
+                  SITE_URL . '/auth/signup">here</a>',
                 'warning',
                 SITE_URL . '/home'
               );
@@ -522,7 +528,8 @@ class auth extends Controller
             ** Passwords are not required for oauth
             */
 
-            if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A', $picture) === false)
+            if ($this->model('user_signup')->
+            create_perm_account($email, $username, 'N/A', $picture) === false)
             {
 
               /*
@@ -1018,7 +1025,8 @@ class auth extends Controller
             ** above we generate a username for the user.
             ** Passwords are not required for oauth
             */
-            if ($this->model('user_signup')->create_perm_account($email, $username, 'N/A', $picture) === false)
+            if ($this->model('user_signup')->
+            create_perm_account($email, $username, 'N/A', $picture) === false)
             {
               /*
               ** If for some reason, a permanent account could not be created
