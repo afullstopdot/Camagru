@@ -16,6 +16,19 @@ class auth extends Controller
 
   public function github($params = [])
   {
+    /*
+    ** Users only allowed here if they are not logged on
+    */
+
+    if (isset($_SESSION['user']))
+    {
+      $this->flash_message(
+        'Oops, you are already signed in!',
+        'warning',
+        SITE_URL
+      );
+    }
+
     $param = isset($params[0]) ? trim($params[0]) : NULL;
     if ($param === 'signup' || $param === 'signin')
     {
@@ -328,6 +341,19 @@ class auth extends Controller
 
   public function slack($params = [])
   {
+    /*
+    ** Users only allowed here if they are not logged on
+    */
+
+    if (isset($_SESSION['user']))
+    {
+      $this->flash_message(
+        'Oops, you are already signed in!',
+        'warning',
+        SITE_URL
+      );
+    }
+
     $param = isset($params[0]) ? trim($params[0]) : NULL;
     if ($param === 'signup' || $param === 'signin')
     {
@@ -617,6 +643,19 @@ class auth extends Controller
 
   public function google($params = [])
   {
+    /*
+    ** Users only allowed here if they are not logged on
+    */
+
+    if (isset($_SESSION['user']))
+    {
+      $this->flash_message(
+        'Oops, you are already signed in!',
+        'warning',
+        SITE_URL
+      );
+    }
+
     $param = isset($params[0]) ? trim($params[0]) : NULL;
     if ($param === 'signup' || $param === 'signin')
     {
@@ -856,6 +895,19 @@ class auth extends Controller
 
   public function fourtytwo($params = [])
   {
+    /*
+    ** Users only allowed here if they are not logged on
+    */
+
+    if (isset($_SESSION['user']))
+    {
+      $this->flash_message(
+        'Oops, you are already signed in!',
+        'warning',
+        SITE_URL
+      );
+    }
+
     $param = isset($params[0]) ? trim($params[0]) : NULL;
     if ($param === 'signup' || $param === 'signin')
     {
@@ -1098,6 +1150,19 @@ class auth extends Controller
 
   public function login($params = [])
   {
+    /*
+    ** Users only allowed here if they are not logged on
+    */
+
+    if (isset($_SESSION['user']))
+    {
+      $this->flash_message(
+        'Oops, you are already signed in!',
+        'warning',
+        SITE_URL
+      );
+    }
+
     if (filter_has_var(INPUT_POST, 'email')
      && filter_has_var(INPUT_POST, 'password'))
     {
@@ -1230,6 +1295,21 @@ class auth extends Controller
 
   public function signup($params = [])
   {
+
+    /*
+    ** If a user is logged in he shouldnt be allowed to create a account
+    ** Redirect home if logged in
+    */
+
+    if (isset($_SESSION['user']))
+    {
+      $this->flash_message(
+        'Oops, you are already signed in!',
+        'warning',
+        SITE_URL
+      );
+    }
+
     if (filter_has_var(INPUT_POST, 'email')
      && filter_has_var(INPUT_POST, 'username')
      && filter_has_var(INPUT_POST, 'password'))
