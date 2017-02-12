@@ -65,14 +65,15 @@ class user_signin extends Model
       {
 
         $stmt = $this->db->prepare(
-          'SELECT user_id, email, username, picture, joined
+          "SELECT user_id, email, username, picture, joined
           FROM users
           WHERE email = :email
-          AND password = 1'
+          AND password = :password"
         );
 
         $stmt->execute([
-          'email' => $email
+          'email' => $email,
+          'password' => 'N/A'
         ]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -81,6 +82,104 @@ class user_signin extends Model
       {
         // return (['validate username error: ' => $e->getMessage()]);//debugging
         return (false);
+      }
+    }
+  }
+
+    /*
+  ** This function will check the database to see if an account exists and can be reset
+  ** An account can only be reset if the email is valid and it is not an oauth account.
+  */
+
+  public function validate_account($email)
+  {
+    if (isset($email))
+    {
+      try
+      {
+        $stmt = $this->db->prepare('
+          SELECT email 
+          FROM users 
+          WHERE email = :email 
+          AND password != :password
+        ');
+
+        $stmt->execute([
+          'email' => $email,
+          'password' => 'N/A'
+        ]);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result === false)
+          return (false);
+        return (true);
+      }
+      catch (PDOException $e)
+      {
+        return (false);
+      }
+    }
+  }
+
+  /*
+  ** This function will insert and also validate the reset token
+  */
+
+  public function reset_token($email, $token, $insert = true)
+  {
+    if (isset($email) && isset($token))
+    {
+      try
+      {
+        if ($insert === true)
+        {
+          $stmt = $this->db->prepare('
+            UPDATE users
+            SET reset = :reset
+            WHERE email = :email
+          ');
+        }
+        else
+        {
+          $stmt = $this->db->prepare('
+            SELECT * 
+            FROM users
+            WHERE email = :email
+            AND reset = :reset
+          ');
+        }
+
+        if ($insert === false)
+        {
+          $stmt->execute([
+            'email' => $email,
+            'reset' => $token
+          ]);
+
+          $result = $stmt->fetch(PDO::FETCH_ASSOC);
+          if ($result === false) 
+          {
+            return false;
+          }
+          else
+          {
+            $stmt = $this->db->prepare('
+              UPDATE users
+              SET reset = "expired"
+              WHERE email = :email
+              AND reset = :reset
+            ');
+          }
+        }
+
+        return $stmt->execute([
+          'email' => $email,
+          'reset' => $token
+        ]);
+      }
+      catch (PDOException $e)
+      {
+        return false;
       }
     }
   }

@@ -12,7 +12,8 @@ $db->query(
     password text,
     admin int(11) UNSIGNED,
     picture text,
-    joined datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+    joined datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    reset text
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ');
 /*create temporary user table - pre verification*/

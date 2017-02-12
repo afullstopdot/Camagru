@@ -20,7 +20,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if (isset($_SESSION['user']))
+    if ($this->valid() === true)
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -204,8 +204,9 @@ class auth extends Controller
 
           if ($param === 'signin')
           {
-            if ($validate['email'] !== 'OK' && $validate['email'] !== 'OK')
+            if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
             {
+              $_SESSION['user'] = $auth;
               $this->flash_message(
                 'Yayy, you logged in',
                 'success',
@@ -345,7 +346,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if (isset($_SESSION['user']))
+    if ($this->valid() === true)
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -514,8 +515,9 @@ class auth extends Controller
 
           if ($param === 'signin')
           {
-            if ($validate['email'] !== 'OK' && $validate['email'] !== 'OK')
+            if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
             {
+              $_SESSION['user'] = $auth;
               $this->flash_message(
                 'Yayy, you logged in',
                 'success',
@@ -647,7 +649,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if (isset($_SESSION['user']))
+    if ($this->valid() === true)
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -784,8 +786,9 @@ class auth extends Controller
 
           if ($param === 'signin')
           {
-            if ($validate['email'] !== 'OK' && $validate['email'] !== 'OK')
+            if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
             {
+              $_SESSION['user'] = $auth;
               $this->flash_message(
                 'Yayy, you logged in',
                 'success',
@@ -899,7 +902,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if (isset($_SESSION['user']))
+    if ($this->valid() === true)
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -1042,8 +1045,9 @@ class auth extends Controller
           */
           if ($param === 'signin')
           {
-            if ($validate['email'] !== 'OK' && $validate['email'] !== 'OK')
+            if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
             {
+              $_SESSION['user'] = $auth;
               $this->flash_message(
                 'Yayy, you logged in',
                 'success',
@@ -1135,12 +1139,132 @@ class auth extends Controller
   }
 
   /*
-  ** Render view for reset
+  ** This function will reset a users account by sending a link with  token
+  ** this will only work if the user has a valid account, and the account
+  ** is not an oauth account.
+  ** This function, renders a view, recieves an ajax post to send the
+  ** reset email, checks if the uid and token are present to verify a
+  ** reset, and finally recieves another post with the new password
   */
 
   public function reset($params = [])
   {
-    $this->view('auth/reset', $params);
+
+    /*
+    ** Check if the user is trying make this request while logged on
+    ** if so redirect, change password is the functionality he should 
+    ** rather use
+    */
+
+    if ($this->valid() === true)
+    {
+      $this->flash_message(
+        'Oops, you cannot reset a logged on account!',
+        'warning',
+        SITE_URL
+      );
+    }
+
+    /*
+    ** If there are two params we expect them to be uid and token
+    ** if so verify and update the user token so that a new view is rendered
+    ** and the token has expired
+    */
+
+    if (sizeof($params) == 2)
+    {
+      $uid = isset($params[0]) ? explode('=', trim($params[0]))[1] : NULL;
+      $token = isset($params[1]) ? explode('=', trim($params[1]))[1] : NULL;
+
+      if (isset($uid) && isset($token))
+      {
+        /*
+        ** Verify that this is a valid token and uid, render view for new password
+        */
+
+        if ($this->model('user_signin')->reset_token(
+          base64_decode($uid), 
+          $token, 
+          false) === true)
+        {
+          //for some reason model always returns true
+          $this->view('auth/reset', ['resp' => 'ok']);
+        }
+      }
+      else
+      {
+        $this->flash_message(
+          'Oops, You have no business here!',
+          'warning',
+          SITE_URL . '/auth/reset'
+        );
+      }
+    }
+
+    /*
+    ** If there is a post with the new passwords, validate the length
+    ** validate that this user is allowed to make this request and update
+    ** the database
+    */
+
+    if (filter_has_var(INPUT_POST, 'password1') && 
+        filter_has_var(INPUT_POST, 'password2'))
+    {
+      
+    }
+
+    /*
+    ** If there is a post request from ajax, check if its a valid eail
+    ** and is not an oauth account, send an email with a reset token
+    ** if there is no post just render the view for reset
+    */
+
+    if (filter_has_var(INPUT_POST, 'email'))
+    {
+      $verify = $this->model('user_signin')->validate_account(
+        filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)
+      );
+
+      if ($verify === true)
+      {
+
+        $token = hash('whirlpool', rand(0, 100));
+        $uid = base64_encode(filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL));
+
+        /*
+        ** Send email with uid and reset token
+        */
+
+        if ($this->model('user_signin')->reset_token(base64_decode($uid), $token) === true)
+        {
+          $url = SITE_URL . '/auth/reset/uid=' .  $uid . '/token=' . $token;
+
+          $message = $this->get_html_str(
+            'Reset your account', 
+            'Reset account', 
+            $url, 
+            $email
+          );
+
+          if ($this->send_mail($email, 'Camagru Account Reset', $message, true) === true)
+          {
+            echo json_encode(['success' => 'Success, please check your email!']);
+          }
+        }
+        else
+        {
+          echo json_encode(['error' => 'Sorry, an error has occurred!']);
+        }
+      }
+      else
+      {
+        echo json_encode(['error' => 'This is not a valid account']);
+      }
+    }
+    else
+    {
+      $this->view('auth/reset', $params);
+    }
   }
 
   /*
@@ -1154,7 +1278,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if (isset($_SESSION['user']))
+    if ($this->valid() === true)
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -1205,12 +1329,15 @@ class auth extends Controller
 
   public function logout($params = [])
   {
-    session_destroy();
-    $this->flash_message(
-      'Yayy, successfully logged out!',
-      'success',
-      SITE_URL
-    );
+    if ($this->valid() === true) {
+      session_destroy();
+      $this->flash_message(
+        'Yayy, successfully logged out!',
+        'success',
+        SITE_URL . '/auth/login'
+      );
+    }
+    $this->redirect();
   }
 
   /*
@@ -1221,6 +1348,14 @@ class auth extends Controller
 
   public function verify($params = [])
   {
+    if ($this->valid() === true)
+    {
+      $this->flash_message(
+        'This account is already verified',
+        'warning',
+        SITE_URL
+      );
+    }
 
     /*
     ** clean up the params so uid and ver have hash values only, this is done by
@@ -1301,10 +1436,10 @@ class auth extends Controller
     ** Redirect home if logged in
     */
 
-    if (isset($_SESSION['user']))
+    if ($this->valid() === true)
     {
       $this->flash_message(
-        'Oops, you are already signed in!',
+        "ops, you're already signed in!",
         'warning',
         SITE_URL
       );

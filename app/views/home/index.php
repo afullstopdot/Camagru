@@ -8,7 +8,15 @@
     <link rel="stylesheet" type="text/css" href="<?php echo SITE_URL; ?>/css/camagru.css">
   </head>
 
-  <body>
+  <body style="background-image: url('<?php 
+                                        if (($ran = rand(0, 2)) == 0) { 
+                                          echo SITE_URL . "/imgs/0.jpg"; 
+                                        } else if ($ran == 1) { 
+                                          echo SITE_URL . "/imgs/2.jpg"; 
+                                        } else { 
+                                          echo SITE_URL . "/imgs/1.jpg"; 
+                                        } 
+                                    ?>');">
 
     <header>
 

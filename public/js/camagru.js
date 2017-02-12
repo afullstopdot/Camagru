@@ -3,12 +3,14 @@
 ** the communication will be done using Ajax
 */
 
-var url = 'http:\/\/localhost:80\/Camagru\/public\/';
+// var url = 'http:\/\/localhost:80\/Camagru\/public\/';
+var url = 'http:\/\/afullstopdot.duckdns.org\/Camagru\/public\/';
 
 window.onload = function () {
     //Ajax registration
     var form = document.forms.namedItem('signup');
     var login = document.forms.namedItem('signin');
+    var reset = document.forms.namedItem('reset');
 
     /*
     ** The btn the user submits the form will be used to show progress
@@ -16,6 +18,7 @@ window.onload = function () {
 
     var btn = document.getElementById('signup-button');
     var login_btn = document.getElementById('signin-button');
+    var reset_btn = document.getElementById('reset-button');
 
     if (form) {
         form.addEventListener('submit', function (e) {
@@ -155,6 +158,53 @@ window.onload = function () {
         e.preventDefault();//prevent the form from redirecting after response
       }, false);
     }
+
+    //reset account
+    
+    if (reset)
+    {
+      reset.addEventListener('submit', function (e) {
+
+        var email_v = validate_email(reset.email.value);
+
+        if (email_v === true) {
+
+          var data = new FormData(reset);
+          var req = new XMLHttpRequest();
+
+          reset_btn.innerHTML = 'Authenticating ...';
+
+          req.open('POST', url + 'auth/reset', true);
+          req.onload = function (event) {
+              if (req.status == 200)
+              {
+                var result = JSON.parse(req.responseText);
+
+                /*
+                ** The response from camagru will be either error with a message
+                ** or success with a message
+                */
+
+                if (typeof result['error'] !== 'undefined')
+                {
+                  reset_btn.innerHTML = result['error'];
+                }
+                else if (typeof result['success'] !== 'undefined')
+                {
+                  reset_btn.innerHTML = result['success'];
+                }
+              }
+              else
+              {
+                reset_btn.innerHTML = 'Oops camagru error!';
+              }
+          };
+          req.send(data);//send form
+        }
+        e.preventDefault();//prevent the form from redirecting after response
+      }, false);
+    }
+
     //end of onload
 };
 

@@ -112,4 +112,18 @@ class Controller
       $this->redirect($redirect);
     }
   }
+
+  /*
+  ** This function will check if a user is logged in or not and will return
+  ** true or false respectively
+  */
+
+  protected function valid()
+  {
+    if (isset($_SESSION['user']['user_id']))
+    {
+      return true;
+    }
+    return false;
+  }
 }
