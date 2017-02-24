@@ -30,6 +30,8 @@ class auth extends Controller
     }
 
     $param = isset($params[0]) ? trim($params[0]) : NULL;
+    $_SESSION['oauth_request'] = $param;
+
     if ($param === 'signup' || $param === 'signin')
     {
 
@@ -201,27 +203,15 @@ class auth extends Controller
           ** By this point, if the user is signing in check if the slack account
           ** is valid and redirect home. Otherwise if its signup create the account.
           */
-
-          if ($param === 'signin')
+          
+          if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
           {
-            if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
-            {
-              $_SESSION['user'] = $auth;
-              $this->flash_message(
-                'Yayy, you logged in',
-                'success',
-                SITE_URL . '/home'
-              );
-            }
-            else
-            {
-              $this->flash_message(
-                'Oops, Not an account. Create one <a href="' .
-                  SITE_URL . '/auth/signup">here</a>',
-                'warning',
-                SITE_URL . '/home'
-              );
-            }
+            $_SESSION['user'] = $auth;
+            $this->flash_message(
+              'Yayy, you logged in',
+              'success',
+              SITE_URL . '/home'
+            );
           }
 
           /*
@@ -267,6 +257,7 @@ class auth extends Controller
               ** our database.
               */
 
+              $_SESSION['user'] = $this->model('user_signin')->oauth_authenticate($email);
               $this->flash_message(
                 'Yayy, registered with github.',
                 'success',
@@ -356,6 +347,8 @@ class auth extends Controller
     }
 
     $param = isset($params[0]) ? trim($params[0]) : NULL;
+    $_SESSION['oauth_request'] = $param;
+
     if ($param === 'signup' || $param === 'signin')
     {
 
@@ -434,7 +427,6 @@ class auth extends Controller
           }
 
         }
-
       }
 
       /*
@@ -513,26 +505,14 @@ class auth extends Controller
           ** is valid and redirect home. Otherwise if its signup create the account.
           */
 
-          if ($param === 'signin')
+          if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
           {
-            if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
-            {
-              $_SESSION['user'] = $auth;
-              $this->flash_message(
-                'Yayy, you logged in',
-                'success',
-                SITE_URL . '/home'
-              );
-            }
-            else
-            {
-              $this->flash_message(
-                'Oops, Not an account. Create one <a href="' .
-                  SITE_URL . '/auth/signup">here</a>',
-                'warning',
-                SITE_URL . '/home'
-              );
-            }
+            $_SESSION['user'] = $auth;
+            $this->flash_message(
+              'Yayy, you logged in',
+              'success',
+              SITE_URL . '/home'
+            );
           }
 
           /*
@@ -579,10 +559,11 @@ class auth extends Controller
               ** our database.
               */
 
+              $_SESSION['user'] = $this->model('user_signin')->oauth_authenticate($email);
               $this->flash_message(
                 'Yayy, registered with slack.',
                 'success',
-                SITE_URL . '/auth/signup'
+                SITE_URL . '/home'
               );
 
               /*
@@ -631,7 +612,6 @@ class auth extends Controller
 
         $this->redirect($auth_url);
       }
-
     }
 
     $this->view('auth/signup');//disable when debugging
@@ -659,6 +639,7 @@ class auth extends Controller
     }
 
     $param = isset($params[0]) ? trim($params[0]) : NULL;
+
     if ($param === 'signup' || $param === 'signin')
     {
 
@@ -728,7 +709,7 @@ class auth extends Controller
       ** now request an auth code. if an access token is set we make an api
       ** request to google for basic user info
       */
-
+      
       if (isset($_SESSION['google_access']))
       {
 
@@ -755,11 +736,8 @@ class auth extends Controller
         ** and therefore our requests fail cause an expired token is being used
         */
 
-        unset($_SESSION['google_access']);
-
         if (isset($response) && !empty($response))
         {
-
           $username = isset($response['name']['givenName']) ?
             $response['name']['givenName'] :
             'N/A';
@@ -784,25 +762,14 @@ class auth extends Controller
           ** Use the information returned to either create or log a user in
           */
 
-          if ($param === 'signin')
+          if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
           {
-            if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
-            {
-              $_SESSION['user'] = $auth;
-              $this->flash_message(
-                'Yayy, you logged in',
-                'success',
-                SITE_URL . '/home'
-              );
-            }
-            else
-            {
-              $this->flash_message(
-                'Oops, Not an account. Create one <a href="' . SITE_URL . '/auth/signup">here</a>',
-                'warning',
-                SITE_URL . '/home'
-              );
-            }
+            $_SESSION['user'] = $auth;
+            $this->flash_message(
+              'Yayy, you logged in',
+              'success',
+              SITE_URL . '/home'
+            );
           }
 
           /*
@@ -842,14 +809,15 @@ class auth extends Controller
               ** At this point oauth is complete the user has been addeded to
               ** our database.
               */
+            
+              $_SESSION['user'] = $this->model('user_signin')->oauth_authenticate($email);
               $this->flash_message(
                 'Yayy, registered with google.',
                 'success',
-                SITE_URL . '/auth/signup'
+                SITE_URL . '/home'
               );
             }
           }
-
         }
         else
         {
@@ -912,6 +880,7 @@ class auth extends Controller
     }
 
     $param = isset($params[0]) ? trim($params[0]) : NULL;
+
     if ($param === 'signup' || $param === 'signin')
     {
 
@@ -1043,26 +1012,17 @@ class auth extends Controller
           ** By this point, if the user is signing in check if the slack account
           ** is valid and redirect home. Otherwise if its signup create the account.
           */
-          if ($param === 'signin')
+          
+          if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
           {
-            if (($auth = $this->model('user_signin')->oauth_authenticate($email)) !== false)
-            {
-              $_SESSION['user'] = $auth;
-              $this->flash_message(
-                'Yayy, you logged in',
-                'success',
-                SITE_URL . '/home'
-              );
-            }
-            else
-            {
-              $this->flash_message(
-                'Oops, Not an account. Create one <a href="' . SITE_URL . '/auth/signup">here</a>',
-                'warning',
-                SITE_URL . '/home'
-              );
-            }
+            $_SESSION['user'] = $auth;
+            $this->flash_message(
+              'Yayy, you logged in',
+              'success',
+              SITE_URL . '/home'
+            );
           }
+           
           /*
           ** if the user is signing up, create account here
           */
@@ -1100,10 +1060,12 @@ class auth extends Controller
               ** At this point oauth is complete the user has been addeded to
               ** our database.
               */
+
+              $_SESSION['user'] = $this->model('user_signin')->oauth_authenticate($email);
               $this->flash_message(
                 'Yayy, registered with 42.',
                 'success',
-                SITE_URL . '/auth/signup'
+                SITE_URL . '/home'
               );
             }
           }
@@ -1329,6 +1291,7 @@ class auth extends Controller
 
   public function logout($params = [])
   {
+  
     if ($this->valid() === true) {
       session_destroy();
       $this->flash_message(

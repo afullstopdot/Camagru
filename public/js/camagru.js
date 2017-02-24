@@ -3,8 +3,8 @@
 ** the communication will be done using Ajax
 */
 
-// var url = 'http:\/\/localhost:80\/Camagru\/public\/';
-var url = 'http:\/\/afullstopdot.duckdns.org\/Camagru\/public\/';
+var url = 'http:\/\/localhost:80\/Camagru\/public\/';
+// var url = 'http:\/\/afullstopdot.duckdns.org\/Camagru\/public\/';
 
 window.onload = function () {
     //Ajax registration
@@ -345,7 +345,7 @@ function username_email_taken(response)
 }
 
 /*
-** This functtion will open and close the alert divs
+** Open and close the alert divs
 */
 
 var close = document.getElementsByClassName("alertclosebtn");
