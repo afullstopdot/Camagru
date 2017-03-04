@@ -165,41 +165,108 @@ window.onload = function () {
     {
       reset.addEventListener('submit', function (e) {
 
-        var email_v = validate_email(reset.email.value);
+        /*
+        ** Reset form will be used to send a verification email
+        ** and also to request the new passwords, as such different
+        ** actions are required for each
+        */
 
-        if (email_v === true) {
+        var index = window.location.href.indexOf("uid");
 
-          var data = new FormData(reset);
-          var req = new XMLHttpRequest();
+        if (index != -1) {
+          var uid = window.location.href.slice(index);
 
-          reset_btn.innerHTML = 'Authenticating ...';
+          index = uid.indexOf("/token");
+          uid = uid.slice(0, index);
+        }
 
-          req.open('POST', url + 'auth/reset', true);
-          req.onload = function (event) {
-              if (req.status == 200)
-              {
-                var result = JSON.parse(req.responseText);
+        if (reset.password1 !== undefined && reset.password2 !== undefined) {
+            
+          /*
+          ** Verification email has a user id, here we get it and pass it to 
+          ** the same reset controller to update the password
+          */
 
-                /*
-                ** The response from camagru will be either error with a message
-                ** or success with a message
-                */
+          var index = window.location.href.indexOf("uid");
 
-                if (typeof result['error'] !== 'undefined')
+          if (index != -1) {
+            var uid = window.location.href.slice(index);
+
+            index = uid.indexOf("/token");
+            uid = uid.slice(0, index);
+
+            var data = new FormData(reset);
+            var req = new XMLHttpRequest();
+
+            reset_btn.innerHTML = 'Changing Password ...';
+
+            req.open('POST', url + 'auth/reset/' + uid, true);
+            req.onload = function (event) {
+                if (req.status == 200)
                 {
-                  reset_btn.innerHTML = result['error'];
+                  console.log(req.responseText);
+                  var result = JSON.parse(req.responseText);
+
+                  /*
+                  ** The response from camagru will be either error with a message
+                  ** or success with a message
+                  */
+
+                  if (typeof result['error'] !== 'undefined')
+                  {
+                    reset_btn.innerHTML = result['error'];
+                  }
+                  else if (typeof result['success'] !== 'undefined')
+                  {
+                    reset_btn.innerHTML = result['success'];
+                  }
                 }
-                else if (typeof result['success'] !== 'undefined')
+                else
                 {
-                  reset_btn.innerHTML = result['success'];
+                  reset_btn.innerHTML = 'Oops camagru error!';
                 }
-              }
-              else
-              {
-                reset_btn.innerHTML = 'Oops camagru error!';
-              }
-          };
-          req.send(data);//send form
+            };
+            req.send(data);//send form
+          }
+        }
+
+        if (reset.email !== undefined && reset.email !== undefined) {
+          var email_v = validate_email(reset.email.value);
+
+          if (email_v === true) {
+
+            var data = new FormData(reset);
+            var req = new XMLHttpRequest();
+
+            reset_btn.innerHTML = 'Authenticating ...';
+
+            req.open('POST', url + 'auth/reset', true);
+            req.onload = function (event) {
+                if (req.status == 200)
+                {
+                  var result = JSON.parse(req.responseText);
+
+                  /*
+                  ** The response from camagru will be either error with a message
+                  ** or success with a message
+                  */
+
+                  if (typeof result['error'] !== 'undefined')
+                  {
+                    reset_btn.innerHTML = result['error'];
+                  }
+                  else if (typeof result['success'] !== 'undefined')
+                  {
+                    reset_btn.innerHTML = result['success'];
+                  }
+                }
+                else
+                {
+                  reset_btn.innerHTML = 'Oops camagru error!';
+                }
+            };
+            req.send(data);//send form
+          }
         }
         e.preventDefault();//prevent the form from redirecting after response
       }, false);

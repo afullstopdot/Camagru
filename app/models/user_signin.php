@@ -183,4 +183,32 @@ class user_signin extends Model
       }
     }
   }
+
+  /*
+  ** This function will update a password
+  */
+
+  public function reset_password($email, $password)
+  {
+    if (isset($email) && isset($password))
+    {
+      try
+      {
+        $stmt = $this->db->prepare('
+          UPDATE users
+          SET password = :password
+          WHERE email = :email
+        ');
+
+        return $stmt->execute([
+          'email' => $email,
+          'password' => $this->password_hash($password)
+        ]);
+      }
+      catch (PDOException $e)
+      {
+        return (false);
+      }
+    }
+  }
 }

@@ -1172,7 +1172,44 @@ class auth extends Controller
     if (filter_has_var(INPUT_POST, 'password1') && 
         filter_has_var(INPUT_POST, 'password2'))
     {
+
+      $password1 = filter_input(INPUT_POST, 'password1', FILTER_SANITIZE_STRING);
+      $password2 = filter_input(INPUT_POST, 'password2', FILTER_SANITIZE_STRING);
       
+      /*
+      ** Check that passwords match, and are longer than 8 characters
+      */
+
+      if ($password1 === $password2)
+      {
+        $uid = isset($params[0]) ? explode('=', trim($params[0]))[1] : NULL;
+
+        if (strlen($password1) > 7)
+        {
+
+          /*
+          ** Update password in db
+          */
+
+          if ($this->model('user_signin')->reset_password(base64_decode($uid), $password1) === true)
+          {
+            echo json_encode(['success' => 'Password successfully reset!']);
+          }
+          else
+          {
+            echo json_encode(['error' => 'Error updating password']);
+          }
+        }
+        else
+        {
+          echo json_encode(['error' => 'Password length must be atleast 8 ']);
+        }
+      }
+      else
+      {
+        echo json_encode(['error' => 'Passwords do not match!']);
+      }
+      exit();
     }
 
     /*
