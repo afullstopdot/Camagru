@@ -6,7 +6,6 @@
 */
 
 session_start();
-// session_destroy();die(); //for debugging
 
 require_once 'core/App.php';
 require_once 'controllers/Controller.php';

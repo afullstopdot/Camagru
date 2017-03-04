@@ -1,10 +1,5 @@
 <?php
 
-/*
-** Clean up notice, for thew oauth create a function to add the users
-** right now repition is used for each oauth strategy, fix before submition
-*/
-
 class auth extends Controller
 {
 
