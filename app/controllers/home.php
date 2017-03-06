@@ -14,7 +14,7 @@ class home extends Controller
   	{
 	   	$this->view('home/index', $params);
   	}
-	$this->view('home/index', $data);
+    $this->view('home/index', $data);
   }
 }
 

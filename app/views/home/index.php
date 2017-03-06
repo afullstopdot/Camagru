@@ -39,8 +39,9 @@
           echo '
             <div class="image-card">
               <img src="' . $value['img_path'] . '" alt="Uploaded Img" style="width:100%">
-              <div class="image-container">
-                <h4><b>' . $value['username'] . '</b></h4> 
+              <button class="accordion">Comments</button>
+              <div class="panel">
+                <p>' . $value['username'] . '</p>
               </div>
             </div>
           ';
