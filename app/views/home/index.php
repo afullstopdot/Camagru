@@ -32,6 +32,22 @@
 
     <?php if (file_exists('../app/views/flash/flash.php')) { require_once '../app/views/flash/flash.php'; } else { echo '<h1>Could not load flash</h1>'; } ?>
 
+    <?php
+      if (isset($data)) 
+      {
+        foreach ($data as $value) {
+          echo '
+            <div class="image-card">
+              <img src="' . $value['img_path'] . '" alt="Uploaded Img" style="width:100%">
+              <div class="image-container">
+                <h4><b>' . $value['username'] . '</b></h4> 
+              </div>
+            </div>
+          ';
+        }
+      }
+    ?>
+
     <footer><p style="text-align: center; color: white;">developed by afullstopdot</p></footer>
 
     <script src="<?php echo SITE_URL; ?>/js/camagru.js"></script>

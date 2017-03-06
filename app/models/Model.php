@@ -23,4 +23,10 @@ class Model
     return hash('whirlpool', $final);
   }
 
+  protected function error_log($message)
+  {
+    $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . 
+    "\r\n" . 'X-Mailer: PHP/' . phpversion();
+    return mail(ADMIN_EMAIL, 'Error on Camagru Website', $message, implode("\r\n", $headers));
+  }
 }

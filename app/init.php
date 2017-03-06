@@ -43,6 +43,12 @@ catch (PDOException $e)
 date_default_timezone_set('Africa/Johannesburg');
 
 /*
+** Admin email for errors
+*/
+
+define('ADMIN_EMAIL', 'andreantoniomarques19@gmail.com');
+
+/*
 ** SITE_URL is the host
 ** Vars prefixed with SLACK are the oauth api endpoints used in auth.php
 */
