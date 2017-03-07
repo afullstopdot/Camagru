@@ -41,6 +41,9 @@
               <img src="' . $value['img_path'] . '" alt="Uploaded Img" style="width:100%">
               <button class="accordion">Comments</button>
               <div class="panel">
+                <div class="profile-picture">
+                  <img src="' . $value['picture'] . '" alt="Person" width="96" height="96">
+                </div>
                 <p>' . $value['username'] . '</p>
               </div>
             </div>

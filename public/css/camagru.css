@@ -211,6 +211,22 @@ div.panel {
     transition: max-height 0.2s ease-out;
 }
 
+
+.profile-picture {
+    display: inline-block;
+    padding: 0 25px;
+    height: 50px;
+    font-size: 18px;
+}
+
+.profile-picture img {
+    float: left;
+    margin: 0 10px 0 -25px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
 @media screen and (max-width:680px) {
 
   .image-card {
