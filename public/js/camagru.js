@@ -7,6 +7,13 @@ var url = 'http:\/\/localhost:80\/Camagru\/public\/';
 // var url = 'http:\/\/afullstopdot.duckdns.org\/Camagru\/public\/';
 
 window.onload = function () {
+
+    /*
+    ** Window has loaded,. hide loader
+    */
+
+    document.getElementById('loading-div').style.display = 'none';
+
     //Ajax registration
     var form = document.forms.namedItem('signup');
     var login = document.forms.namedItem('signin');

@@ -174,7 +174,7 @@ span.psw
 
 button.accordion {
     font-family: 'Shadows Into Light', cursive;
-    background-color: #2B2D2D;
+    background-color: #2BB310;
     color: white;
     cursor: pointer;
     padding: 18px;
@@ -187,7 +187,7 @@ button.accordion {
 }
 
 button.accordion.active, button.accordion:hover {
-    background-color: #2B2D2D;
+    background-color: #216A12;
 }
 
 button.accordion:after {
@@ -225,6 +225,30 @@ div.panel {
     height: 50px;
     width: 50px;
     border-radius: 50%;
+}
+
+.loader {
+  border: 16px solid #787C77;
+  border-radius: 50%;
+  border-top: 16px solid #595A59;
+  width: 120px;
+  height: 120px;
+  margin: auto;
+  margin-top: 20%;
+  margin-bottom: 100%;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  text-align: center;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @media screen and (max-width:680px) {

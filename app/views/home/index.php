@@ -32,6 +32,7 @@
 
     <?php if (file_exists('../app/views/flash/flash.php')) { require_once '../app/views/flash/flash.php'; } else { echo '<h1>Could not load flash</h1>'; } ?>
 
+    <div id="loading-div" class="loader"><p style="color: white;">Loading</p></div>
     <?php
       if (isset($data)) 
       {
@@ -39,12 +40,14 @@
           echo '
             <div class="image-card">
               <img src="' . $value['img_path'] . '" alt="Uploaded Img" style="width:100%">
-              <button class="accordion">Comments</button>
-              <div class="panel">
+              <button class="accordion">
                 <div class="profile-picture">
                   <img src="' . $value['picture'] . '" alt="Person" width="96" height="96">
+                  ' . $value['username'] . '
                 </div>
-                <p>' . $value['username'] . '</p>
+              </button>
+              <div class="panel">
+                <p>No comments</p>
               </div>
             </div>
           ';
