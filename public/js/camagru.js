@@ -12,7 +12,9 @@ window.onload = function () {
     ** Window has loaded,. hide loader
     */
 
-    document.getElementById('loading-div').style.display = 'none';
+    if (document.getElementById('loading-div') !== null) {
+      document.getElementById('loading-div').style.display = 'none';
+    }
 
     //Ajax registration
     var form = document.forms.namedItem('signup');
@@ -237,7 +239,7 @@ window.onload = function () {
           }
         }
 
-        if (reset.email !== undefined && reset.email !== undefined) {
+        if (reset.email !== undefined) {
           var email_v = validate_email(reset.email.value);
 
           if (email_v === true) {
