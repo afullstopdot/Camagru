@@ -60,7 +60,11 @@ class user_signup
       }
       catch (PDOException $e)
       {
-        //return ['check_verify fail' => $e->getMessage()];//debugging
+        $this->error_log('
+          <p>Model:<b style="color: cyan; font-size: 18px;"> user_signup.php</b></p><hr>
+          <p>Function:<b style="color: green; font-size: 18px;"> check_verify()</b></p><hr>
+          <p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+        );
         return (false);
       }
     }
@@ -111,7 +115,11 @@ class user_signup
       }
       catch (PDOException $e)
       {
-        // return ['create perm error' => $e->getMessage()];//debugging
+        $this->error_log('
+          <p>Model:<b style="color: cyan; font-size: 18px;"> user_signup.php</b></p><hr>
+          <p>Function:<b style="color: green; font-size: 18px;"> create_perm_account()</b></p><hr>
+          <p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+        );
         return (false);
       }
     }
@@ -149,7 +157,11 @@ class user_signup
       }
       catch (PDOException $e)
       {
-        // return (['create account error' => $e->getMessage()]); //debugging
+        $this->error_log('
+          <p>Model:<b style="color: cyan; font-size: 18px;"> user_signup.php</b></p><hr>
+          <p>Function:<b style="color: green; font-size: 18px;"> create_temp_account()</b></p><hr>
+          <p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+        );
         return (false);
       }
     }

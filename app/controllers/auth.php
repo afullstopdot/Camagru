@@ -1309,7 +1309,10 @@ class auth extends Controller
         $_SESSION['user'] = $auth;
         if (isset($_SESSION['user']))
         {
-          echo json_encode(['success' => 'Authentification Success!']);
+          echo json_encode([
+            'success' => 'Authentification Success!',
+            'username' => $_SESSION['user']['username']
+          ]);
         }
       }
     }
@@ -1329,7 +1332,7 @@ class auth extends Controller
       $this->flash_message(
         'Yayy, successfully logged out!',
         'success',
-        SITE_URL . '/auth/login'
+        SITE_URL . '/home'
       );
     }
     $this->redirect();

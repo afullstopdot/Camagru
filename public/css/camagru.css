@@ -9,6 +9,16 @@ body
   font-family: 'Shadows Into Light', cursive;
 }
 
+#hash
+{
+  position: fixed;
+  background: rgba(51, 51, 51, 0.95);
+  height: 100%;
+  width: 100%;
+  transition: 1s;
+  display: block;
+}
+
 ul.topnav
 {
   list-style-type: none;
@@ -51,12 +61,13 @@ ul.topnav li.icon
 
 #google
 {
-  width: 23.5%;
+  width: 25%;
   height: 45px;
   display: ìnline;
   background-color: #D70606;
   border: none;
   color: white;
+  margin: 0px;
 }
 #fourty
 {
@@ -66,24 +77,27 @@ ul.topnav li.icon
   background-color: #333;
   border: none;
   color: white;
+  margin: 0px;
 }
 
 #slack
 {
-  width: 23.5%;
+  width: 24%;
   height: 45px;
   display: ìnline;
   background-color: #7D1C44;
   border: none;
+  margin: 0px;
 }
 
 #github
 {
-  width: 23.5%;
+  width: 25%;
   height: 45px;
   display: ìnline;
   background-color: white;
   border: none;
+  margin: 0px;
 }
 
 #leglin
@@ -92,6 +106,13 @@ ul.topnav li.icon
   border-right: none;
   border-bottom: none;
   border-color: white;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 5px;
 }
 
 /*alert*/
@@ -128,6 +149,7 @@ input[type=text], input[type=password], input[type=email]
   display: inline-block;
   border: 1px solid #ccc;
   box-sizing: border-box;
+  font-family: 'Shadows Into Light', cursive;
 }
 
 button
@@ -143,7 +165,7 @@ button
 
 .container
 {
-  padding: 10px;
+  padding: 10px 0px 0px 0px;
   width: 40%;
   margin: auto;
 }
@@ -174,7 +196,7 @@ span.psw
 
 button.accordion {
     font-family: 'Shadows Into Light', cursive;
-    background-color: #2BB310;
+    background-color: rgba(29, 216, 162, 0.76);
     color: white;
     cursor: pointer;
     padding: 18px;
@@ -187,30 +209,21 @@ button.accordion {
 }
 
 button.accordion.active, button.accordion:hover {
-    background-color: #216A12;
-}
-
-button.accordion:after {
-    content: '\002B';
-    color: #777;
-    font-weight: bold;
-    float: right;
-    margin-left: 5px;
-}
-
-button.accordion.active:after {
-    content: "\2212";
+    background-color: rgba(30, 123, 97, 0.93);
 }
 
 div.panel {
     font-family: 'Shadows Into Light', cursive;
     padding: 0 18px;
-    background-color: #5C5F5F;
+    background-color: rgba(21, 109, 128, 0.74);
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
 }
 
+div.heart {
+  float: right;
+}
 
 .profile-picture {
     display: inline-block;
@@ -228,17 +241,21 @@ div.panel {
 }
 
 .loader {
-  border: 16px solid #787C77;
+  border: 30px solid rgba(33, 150, 243, 0.87);
   border-radius: 50%;
-  border-top: 16px solid #595A59;
-  width: 120px;
-  height: 120px;
+  border-top: 30px solid rgba(16, 82, 121, 0.67);;
+  width: 220px;
+  height: 220px;
   margin: auto;
   margin-top: 20%;
   margin-bottom: 100%;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
   text-align: center;
+  z-index: 1;
+  position: fixed;
+  left: 0;
+  right: 0;
 }
 
 @-webkit-keyframes spin {
@@ -251,7 +268,141 @@ div.panel {
   100% { transform: rotate(360deg); }
 }
 
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  height: 100px;
+  margin: auto;
+}
+
+.modal-header {
+  width: 100%;
+  height: 30%;
+  text-align: center;
+  background-color: #333;
+  color: white;
+  font-size: 22px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.modal-content {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: white;
+  background-color: #106b6a;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-left: 5px;
+  font-family: 'Shadows Into Light', cursive;
+}
+
+.modal-close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.like-button {
+  color: cyan;
+  display: block;
+  font-size: 18px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 15px;
+  padding-bottom: 5px;
+}
+
+.like-button:hover,
+.like-button:focus {
+  color: red;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.comment-area {
+  width: 100%;
+  color: white;
+  background: rgba(0, 0, 0, 0.13);
+  border-left-width: 0px;
+  border-top-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
+}
+
+.comment-submit-button {
+  width: 100%;
+  text-align: center;
+  background-color: #333;
+  padding-top: 10px;
+  font-family: 'Shadows Into Light', cursive;
+}
+
+textarea {
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 0px;
+  margin-top: 5px;
+  font-family: 'Shadows Into Light', cursive;
+}
+
 @media screen and (max-width:680px) {
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    margin: auto;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .modal-content {
+    width: 98%;
+    height: 100%;
+    text-align: center;
+    color: white;
+    background-color: #106b6a;
+    padding-top: 5px;
+    padding-right: 0px;
+    padding-left: 0px;
+  }
+
+  .modal-header {
+    width: 100%;
+    height: 30%;
+    text-align: center;
+    background-color: #333;
+    color: white;
+    font-size: 22px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 0px;
+    padding-left: 0px;
+  }
 
   .image-card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -307,6 +458,7 @@ div.panel {
     display: ìnline;
     background-color: #D70606;
     border: none;
+    margin: 5px 0px 0px 0px;
   }
 
   #fourty
@@ -316,6 +468,7 @@ div.panel {
     display: ìnline;
     background-color: #333;
     border: none;
+    margin: 5px 0px 0px 0px;
   }
 
   #slack
@@ -325,6 +478,7 @@ div.panel {
     display: ìnline;
     background-color: #7D1C44;
     border: none;
+    margin: 5px 0px 0px 0px;
   }
 
   #github
@@ -334,7 +488,9 @@ div.panel {
     display: ìnline;
     background-color: white;
     border: none;
+    margin: 5px 0px 0px 0px;
   }
+
   .container
   {
     padding: 10px;

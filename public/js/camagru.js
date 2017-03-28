@@ -5,6 +5,10 @@
 
 var url = 'http:\/\/localhost:80\/Camagru\/public\/';
 // var url = 'http:\/\/afullstopdot.duckdns.org\/Camagru\/public\/';
+var color_red = '#710909';
+var color_blue = '#119261';
+var color_grey = '#333';
+var color_green = '#33a203';
 
 window.onload = function () {
 
@@ -12,8 +16,11 @@ window.onload = function () {
     ** Window has loaded,. hide loader
     */
 
+    var active_acc; //rezise comments when new one added
+
     if (document.getElementById('loading-div') !== null) {
       document.getElementById('loading-div').style.display = 'none';
+      document.getElementById('hash').style.height = '0px';       
     }
 
     //Ajax registration
@@ -56,6 +63,7 @@ window.onload = function () {
             var req = new XMLHttpRequest();
 
             btn.innerHTML = 'Creating account ...';
+            btn.style.backgroundColor = color_blue;
 
             req.open('POST', url + 'auth/signup', true);
             req.onload = function (event) {
@@ -68,32 +76,40 @@ window.onload = function () {
 
                   var result = JSON.parse(req.responseText);
 
-                  console.log(result); // if mailer not working i use this to get the link
                   if (typeof result['error'] !== 'undefined')
                   {
                       btn.innerHTML = 'Oops, Invalid details!';
+                      btn.style.backgroundColor = color_red;
                   }
                   else {
                     if (typeof result['email'] !== 'undefined' &&
                         typeof result['username'] !== 'undefined')
                     {
                       username_email_taken(result);
-                      if (result['email'] === 'OK' && result['username'] === 'OK')
+                      if (result['email'] === 'OK' && result['username'] === 'OK') {
                         btn.innerHTML = 'Account created!';
-                      else
+                        btn.style.backgroundColor = color_green;
+                      }
+                      else {
                         btn.innerHTML = 'Unsuccessful!';
+                        btn.style.backgroundColor = color_red;
+                      }
                     }
                     else {
                       btn.innerHTML = 'Oops error!!';
+                      btn.style.backgroundColor = color_red;
                     }
                   }
                 }
                 else {
                   btn.innerHTML = 'Oops error!';
-                  console.log('error communicating with camagru server.');
+                  btn.style.backgroundColor = color_red;
                 }
             };
             req.send(data);//send form
+          }
+          else {
+            btn.style.backgroundColor = color_red;
           }
           e.preventDefault();//prevent the form from redirecting after response
         }, false);
@@ -109,14 +125,13 @@ window.onload = function () {
         */
 
         var email_v = validate_email(login.email.value);
-        var password_v = validate_password(login.password.value);
 
         /*
         ** if the form has been validated, we will communicate with the server, the server response will be
         ** if the username and/or email are in use already.
         */
 
-        if (email_v && password_v) {
+        if (email_v) {
 
           /*
           ** Update the btn text so the user knows whats happening, send the form via post and depending on the response
@@ -127,6 +142,7 @@ window.onload = function () {
           var req = new XMLHttpRequest();
 
           login_btn.innerHTML = 'Authenticating ...';
+          login_btn.style.backgroundColor = color_blue;
 
           req.open('POST', url + 'auth/login', true);
           req.onload = function (event) {
@@ -142,10 +158,15 @@ window.onload = function () {
 
                 if (typeof result['error'] !== 'undefined')
                 {
-                  login_btn.innerHTML = 'ERROR!';
+                  login_btn.innerHTML = 'Invalid email/password';
+                  login_btn.style.backgroundColor = color_red;
                 }
                 else if (typeof result['success'] !== 'undefined')
                 {
+                  if (get_cookie('username') == '') {
+                    create_cookie('username', result['username'], 5);
+                  }
+                  login_btn.style.backgroundColor = color_green;
                   login_btn.innerHTML = 'Success, redirecting ...!';
                   window.location = url + 'home';
                 }
@@ -158,10 +179,16 @@ window.onload = function () {
                 ** The response from camagru was not okay
                 */
 
-                //console.log(req.status); //for debuggin
                 login_btn.innerHTML = 'Oops camagru error!';
+                login_btn.style.backgroundColor = color_red;
               }
           };
+
+          window.setTimeout(function () {
+            login_btn.innerHTML = 'Log me in !';
+            login_btn.style.backgroundColor = color_grey;
+          }, 5000);
+
           req.send(data);//send form
         }
         e.preventDefault();//prevent the form from redirecting after response
@@ -169,7 +196,6 @@ window.onload = function () {
     }
 
     //reset account
-    
     if (reset)
     {
       reset.addEventListener('submit', function (e) {
@@ -208,12 +234,12 @@ window.onload = function () {
             var req = new XMLHttpRequest();
 
             reset_btn.innerHTML = 'Changing Password ...';
+            reset_btn.style.backgroundColor = color_blue;
 
             req.open('POST', url + 'auth/reset/' + uid, true);
             req.onload = function (event) {
                 if (req.status == 200)
                 {
-                  console.log(req.responseText);
                   var result = JSON.parse(req.responseText);
 
                   /*
@@ -224,17 +250,24 @@ window.onload = function () {
                   if (typeof result['error'] !== 'undefined')
                   {
                     reset_btn.innerHTML = result['error'];
+                    reset_btn.style.backgroundColor = color_red;
                   }
                   else if (typeof result['success'] !== 'undefined')
                   {
                     reset_btn.innerHTML = result['success'];
+                    reset_btn.style.backgroundColor = color_green;
                   }
                 }
                 else
                 {
                   reset_btn.innerHTML = 'Oops camagru error!';
+                  reset_btn.style.backgroundColor = color_red;
                 }
             };
+            window.setTimeout(function () {
+              reset_btn.innerHTML = 'Reset Account !';
+              reset_btn.style.backgroundColor = color_grey;
+            }, 5000);
             req.send(data);//send form
           }
         }
@@ -248,6 +281,7 @@ window.onload = function () {
             var req = new XMLHttpRequest();
 
             reset_btn.innerHTML = 'Authenticating ...';
+            reset_btn.style.backgroundColor = color_blue;
 
             req.open('POST', url + 'auth/reset', true);
             req.onload = function (event) {
@@ -262,18 +296,24 @@ window.onload = function () {
 
                   if (typeof result['error'] !== 'undefined')
                   {
+                    reset_btn.style.backgroundColor = color_red;
                     reset_btn.innerHTML = result['error'];
                   }
                   else if (typeof result['success'] !== 'undefined')
                   {
+                    reset_btn.style.backgroundColor = color_green;
                     reset_btn.innerHTML = result['success'];
                   }
                 }
                 else
                 {
+                  reset_btn.style.backgroundColor = color_red;
                   reset_btn.innerHTML = 'Oops camagru error!';
                 }
             };
+            window.setTimeout(function () {
+              reset_btn.style.backgroundColor = color_grey;
+            }, 5000);
             req.send(data);//send form
           }
         }
@@ -281,7 +321,67 @@ window.onload = function () {
       }, false);
     }
 
-    //end of onload
+    // comment
+    var buttons = document.getElementsByName('comment-submit');
+    var count;
+
+    if (buttons) {
+      for (count = 0; count < buttons.length; count++) {
+        buttons[count].onclick = function (e) {
+            var id = this.id;
+            var comment = document.forms[id + '-form'];
+            var button = this;
+
+            if (comment) {
+              if (comment.data.value != '') {
+                var data = new FormData(comment);
+                var req = new XMLHttpRequest();
+
+                button.innerHTML = 'Posting ...';
+                button.style.backgroundColor = color_blue;
+                req.open('POST', comment.action, true);
+                req.onload = function (event) {
+                  if (req.status == 200)
+                  {
+                    var result = JSON.parse(req.responseText);
+
+                    if (result.success === true) {
+                      button.style.backgroundColor = color_green;
+                      button.innerHTML = 'Comment posted!';
+                      add_comment(id + '-comment-panel', get_cookie('username'), result.comment);
+                      comment.data.value = '';
+                    }
+                    else {
+                      button.style.backgroundColor = color_red;
+                      if (result.status === 1) {
+                        button.innerHTML = 'Log in to comment';
+                      }
+                      if (result.status === 2) {
+                        button.innerHTML = 'Image not specified/invalid';
+                      }
+                    }
+                  }
+                  else
+                  {
+                    button.style.backgroundColor = color_red;
+                    button.innerHTML = 'Oops Camagru error!';
+                  }
+                };
+                req.send(data);
+              }
+              else {
+                button.innerHTML = 'Write something!';
+              }
+              window.setTimeout(function () {
+                button.innerHTML = 'Comment';
+                button.style.backgroundColor = color_grey;
+              }, 5000);
+            }
+            //end
+            e.preventDefault();
+        }
+      }
+    }
 
     //accordion
     var acc = document.getElementsByClassName("accordion");
@@ -298,7 +398,77 @@ window.onload = function () {
         } 
       }
     }
+
+    /*
+    ** Open and close the alert divs
+    */
+
+    var close = document.getElementsByClassName("alertclosebtn");
+    var i;
+
+    for (i = 0; i < close.length; i++) {
+      close[i].onclick = function(){
+        var div = this.parentElement;
+        div.style.opacity = "0";
+        setTimeout(function(){ div.style.display = "none"; }, 600);
+      }
+    }
+
+    var modal = document.getElementById('dialog-modal');
+    var modal_close = document.getElementById('close-modal');
+
+    if (modal && modal_close) {
+      modal_close.onclick = function () {
+        modal.style.display = 'none';
+      }
+
+      window.onclick = function (event) {
+        modal.style.display = 'none';
+      }
+    }
 };
+
+/*
+** Like picture
+*/
+
+function like(id) {
+  var XHR = new XMLHttpRequest();
+
+  if (id) {
+    var req = new XMLHttpRequest();
+
+    req.open('POST', url + 'home/add_like/' + id, true);
+    req.onload = function (event) {
+      if (req.status == 200)
+      {
+        var result = JSON.parse(req.responseText); 
+
+        /*
+        ** If like_status that means a valid request has been answered
+        */
+
+        if (result['like_status'] !== undefined) {
+          if (result['like_status'] === 200) {
+            document.getElementById(id + ' like-count').innerHTML = result['like_count'];
+            document.getElementById(id + ' like-count').style.color = 'red';
+          }
+        }
+
+        /*
+        ** If like_error that means a invalid request has been answered
+        */
+
+        if (result['like_error'] !== undefined) {
+          document.getElementById('dialog-modal').style.display = 'block';
+          document.getElementById('header-modal').innerHTML = 'Oops, slight problemo';
+          document.getElementById('content-modal').innerHTML = '<span id="close-modal" class="modal-close">&times;</span>' + result['like_error'];
+        }
+      }
+    };
+    req.send();
+  }
+}
 
 /*
 ** open and close nav bar for small screens
@@ -437,16 +607,73 @@ function username_email_taken(response)
 }
 
 /*
-** Open and close the alert divs
+** Cookies. store user info in browser
 */
 
-var close = document.getElementsByClassName("alertclosebtn");
-var i;
+function create_cookie(name, value, exp)
+{
+  var date = new Date();
+  var expires;
 
-for (i = 0; i < close.length; i++) {
-  close[i].onclick = function(){
-    var div = this.parentElement;
-    div.style.opacity = "0";
-    setTimeout(function(){ div.style.display = "none"; }, 600);
+  date.setTime(date.getTime() + (exp * 24 * 60 * 60 * 1000));
+  expires = "expires=" + date.toUTCString();
+  if (date && expires) {
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+  }
+}
+
+/*
+** Get the value of a cookie
+*/
+
+function get_cookie(cname)
+{
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var arr = decodedCookie.split(';');
+  var cookie;
+
+  for (var count = 0; count < arr.length; count++) {
+    cookie = arr[count];
+    while (cookie.charAt(0) == ' ') {
+      cookie = cookie.substring(1);
+    }
+
+    if (cookie.indexOf(name) == 0) {
+      return cookie.substring(name.length, cookie.length);
+    }
+  }
+  return "";
+}
+
+/*
+** Delete cookie
+*/
+
+function delete_cookie(name)
+{
+  if (name) {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+}
+
+/*
+** Create new comment element
+*/
+
+function add_comment(panel, username, text)
+{
+  if (panel && username && text) {
+    var parent = document.getElementById(panel);
+    var comment = document.createElement('p');
+    var username_e = document.createElement('strong');
+
+    username_e.style.color = "white";
+
+    comment.appendChild(document.createTextNode(' ' + text));
+    parent.insertBefore(comment, parent.childNodes[0]);
+
+    username_e.appendChild(document.createTextNode(username));
+    comment.insertBefore(username_e, comment.childNodes[0]);
   }
 }

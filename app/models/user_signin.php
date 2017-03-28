@@ -45,7 +45,11 @@ class user_signin extends Model
       }
       catch (PDOException $e)
       {
-        // return (['validate username error: ' => $e->getMessage()]);//debugging
+        $this->error_log('
+          <p>Model:<b style="color: cyan; font-size: 18px;"> user_signin.php</b></p><hr>
+          <p>Function:<b style="color: green; font-size: 18px;"> authenticate()</b></p><hr>
+          <p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+        );
         return (false);
       }
     }
@@ -80,7 +84,11 @@ class user_signin extends Model
       }
       catch (PDOException $e)
       {
-        // return (['validate username error: ' => $e->getMessage()]);//debugging
+        $this->error_log('
+          <p>Model:<b style="color: cyan; font-size: 18px;"> user_signin.php</b></p><hr>
+          <p>Function:<b style="color: green; font-size: 18px;"> oauth_authenticate()</b></p><hr>
+          <p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+        );
         return (false);
       }
     }
@@ -116,6 +124,11 @@ class user_signin extends Model
       }
       catch (PDOException $e)
       {
+        $this->error_log('
+          <p>Model:<b style="color: cyan; font-size: 18px;"> user_signin.php</b></p><hr>
+          <p>Function:<b style="color: green; font-size: 18px;"> validate_account()</b></p><hr>
+          <p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+        );
         return (false);
       }
     }
@@ -179,6 +192,11 @@ class user_signin extends Model
       }
       catch (PDOException $e)
       {
+        $this->error_log('
+          <p>Model:<b style="color: cyan; font-size: 18px;"> user_signin.php</b></p><hr>
+          <p>Function:<b style="color: green; font-size: 18px;"> reset_token()</b></p><hr>
+          <p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+        );
         return false;
       }
     }
@@ -207,6 +225,11 @@ class user_signin extends Model
       }
       catch (PDOException $e)
       {
+        $this->error_log('
+          <p>Model:<b style="color: cyan; font-size: 18px;"> user_signin.php</b></p><hr>
+          <p>Function:<b style="color: green; font-size: 18px;"> reset_password()</b></p><hr>
+          <p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+        );
         return (false);
       }
     }

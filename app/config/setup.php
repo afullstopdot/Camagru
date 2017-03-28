@@ -2,11 +2,22 @@
 
 try
 {
-  /*create database*/
+  /*
+  ** Create database
+  */
+
   $db->query('CREATE DATABASE IF NOT EXISTS db_camagru');
-  /*select database*/
+
+  /*
+  ** Select database
+  */
+
   $db->query('USE db_camagru');
-  /*create permanent user table - post verification*/
+
+  /*
+  ** Create permanent user table - post verification
+  */
+
   $db->query(
     'CREATE TABLE IF NOT EXISTS users (
       user_id int(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -19,7 +30,11 @@ try
       reset text
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   ');
-  /*create temporary user table - pre verification*/
+
+  /*
+  ** Create temporary user table - pre verification
+  */
+
   $db->query(
     'CREATE TABLE IF NOT EXISTS unverified_users (
       user_id int(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -30,7 +45,11 @@ try
       verification text
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   ');
-  /*create a table for image uploads*/
+
+  /*
+  ** Create a table for image uploads
+  */
+
   $db->query(
     'CREATE TABLE IF NOT EXISTS uploads (
       image_id int(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -39,8 +58,35 @@ try
       upload_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   ');
+
+  /*
+  ** Create a tbale for comments
+  */
+
+  $db->query(
+    'CREATE TABLE IF NOT EXISTS comments (
+      comment_id int(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      image_id int(11) UNSIGNED,
+      user_id text,
+      comment text,
+      comment_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  ');
+
+  /*
+  ** Create a table for likes
+  */
+
+  $db->query(
+    'CREATE TABLE IF NOT EXISTS likes (
+      like_id int(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      image_id int(11) UNSIGNED,
+      user_id int(11) UNSIGNED,
+      like_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  ');
 }
 catch (PDOException $e)
 {
-  echo 'ERROR EOW: ' . $e->getMessage();
+  die('FATAL ERROR: ' . $e->getMessage());
 }

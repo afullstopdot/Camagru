@@ -25,8 +25,10 @@ class Model
 
   protected function error_log($message)
   {
-    $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' . 
-    "\r\n" . 'X-Mailer: PHP/' . phpversion();
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+    $headers[] = 'From: Camagru Team <andreantoniomarques19@gmail.com>';
+
     return mail(ADMIN_EMAIL, 'Error on Camagru Website', $message, implode("\r\n", $headers));
   }
 }

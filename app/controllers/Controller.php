@@ -128,6 +128,18 @@ class Controller
   }
 
   /*
+  ** Return the current user for this session
+  */
+
+  protected function user()
+  {
+    if ($this->valid()) {
+      return $_SESSION['user'];
+    }
+    return false;
+  }
+
+  /*
   ** Create random bytes to be used for crsf protection
   */
 
