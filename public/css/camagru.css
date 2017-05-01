@@ -12,7 +12,7 @@ body
 #hash
 {
   position: fixed;
-  background: rgba(51, 51, 51, 0.95);
+  background: rgba(47, 58, 55, 0.20);
   height: 100%;
   width: 100%;
   transition: 1s;
@@ -23,9 +23,10 @@ ul.topnav
 {
   list-style-type: none;
   margin: 0;
+  margin-bottom: 5px;
   padding: 0;
   overflow: hidden;
-  background-color: #333;
+  background-color: rgba(47, 58, 55, 0.20);
 }
 
 ul.topnav li
@@ -44,6 +45,11 @@ ul.topnav li a
   font-size: 17px;
 }
 
+ul.topnav:hover
+{
+  background-color: rgba(47, 58, 55, 0.50);
+}
+
 ul.topnav li a:hover
 {
   background-color: #555;
@@ -52,6 +58,11 @@ ul.topnav li a:hover
 ul.topnav li.icon
 {
   display: none;
+}
+
+footer
+{
+    margin-bottom: 10px;
 }
 
 #oauth
@@ -362,6 +373,20 @@ textarea {
   padding-bottom: 0px;
   margin-top: 5px;
   font-family: 'Shadows Into Light', cursive;
+}
+
+.profile-container {
+  width: 100%;
+  border: none;
+}
+
+.profile-live {
+  width: 70%;
+  padding: 10px;
+}
+
+#profile-canvas {
+  display: none;
 }
 
 @media screen and (max-width:680px) {

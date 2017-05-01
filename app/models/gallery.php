@@ -68,6 +68,100 @@ class gallery extends Model
 	}
 
 	/*
+	** Get all upload by user to create thumbnails
+	*/
+
+	public function getThumbnails($id)
+	{
+		if (isset($this->db))
+		{
+			try 
+			{
+				$stmt = $this->db->prepare('
+					SELECT i.img_path, i.upload_time
+					FROM uploads as i
+					WHERE i.user_id = :id
+					ORDER BY i.upload_time DESC
+				');
+
+				$stmt->execute([
+					'id' => $id
+				]);
+				return $stmt->fetchAll();
+			}
+			catch (PDOException $e)
+			{
+
+				/*
+				** Send emails to admin
+				*/
+
+				$this->error_log('
+					<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
+					<p>Function:<b style="color: green; font-size: 18px;"> getThumbnails()</b></p><hr>
+					<p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+				);
+				return false;
+			}
+		}
+		else
+		{
+			$this->error_log('
+				<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
+				<p>Function:<b style="color: green; font-size: 18px;"> getThumbnails()</b></p><hr>
+				<p>Error:<b style="color: red; font-size: 18px;">PDO object not set</b></p><hr>'
+			);
+			return false;
+		}
+	}
+
+	/*
+	** Add upload
+	*/
+
+	public function addUpload($id, $path)
+	{
+		if (isset($this->db))
+		{
+			try 
+			{
+				$stmt = $this->db->prepare('
+					INSERT INTO uploads (user_id, img_path)
+					VALUES (:id, :img_path)
+				');
+
+				return $stmt->execute([
+					'id' => $id,
+					'img_path' => $path
+				]);
+			}
+			catch (PDOException $e)
+			{
+
+				/*
+				** Send emails to admin
+				*/
+
+				$this->error_log('
+					<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
+					<p>Function:<b style="color: green; font-size: 18px;"> addUpload()</b></p><hr>
+					<p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+				);
+				return false;
+			}
+		}
+		else
+		{
+			$this->error_log('
+				<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
+				<p>Function:<b style="color: green; font-size: 18px;"> addUpload()</b></p><hr>
+				<p>Error:<b style="color: red; font-size: 18px;">PDO object not set</b></p><hr>'
+			);
+			return false;
+		}
+	}
+
+	/*
 	** Get list of comments for each upload
 	*/
 
@@ -328,7 +422,7 @@ class gallery extends Model
 
 	public function imageOwner($image)
 	{
-		if (isset($this->db)) {
+		if (isset($this->db) && isset($image)) {
 			try
 			{
 				$stmt = $this->db->prepare('
@@ -360,6 +454,96 @@ class gallery extends Model
 			$this->error_log('
 				<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
 				<p>Function:<b style="color: green; font-size: 18px;"> imageOwner()</b></p><hr>
+				<p>Error:<b style="color: red; font-size: 18px;">PDO object not set</b></p><hr>'
+			);
+			return false;
+		}
+	}
+
+	/*
+	** Using the path of the image, remove the record
+	** if it belongs to the user 
+	*/
+
+	public function removeUpload($id, $path)
+	{
+		if (isset($this->db) && isset($id) && isset($path)) {
+			try
+			{
+				$stmt = $this->db->prepare('
+					DELETE u, c, l 
+					FROM uploads as u
+					LEFT JOIN comments as c
+					ON u.image_id = c.image_id
+					LEFT JOIN likes as l
+					ON u.image_id = l.image_id
+					WHERE u.user_id = :id
+					AND u.img_path = :img_path
+				');
+
+				return $stmt->execute([
+					'id' => $id,
+					'img_path' => $path
+				]);
+			}
+			catch (PDOException $e)
+			{
+				$this->error_log('
+					<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
+					<p>Function:<b style="color: green; font-size: 18px;"> getImageByOwner()</b></p><hr>
+					<p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+				);
+				return false;
+			}
+		}
+		else
+		{
+			$this->error_log('
+				<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
+				<p>Function:<b style="color: green; font-size: 18px;"> getImageByName()</b></p><hr>
+				<p>Error:<b style="color: red; font-size: 18px;">PDO object not set</b></p><hr>'
+			);
+			return false;
+		}
+	}
+
+	/*
+	** Find image by name and return image id
+	*/
+
+	public function findImageByName($id, $path)
+	{
+		if (isset($this->db) && isset($id) && isset($path)) {
+			try
+			{
+				$stmt = $this->db->prepare('
+					SELECT image_id
+					FROM uploads
+					WHERE user_id = :id
+					AND img_path = :img_path
+				');
+
+				$stmt->execute([
+					'id' => $id,
+					'img_path' => $path
+				]);
+				return $stmt->fetch(PDO::FETCH_BOTH);
+			}
+			catch (PDOException $e)
+			{
+				$this->error_log('
+					<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
+					<p>Function:<b style="color: green; font-size: 18px;"> findImageByName()</b></p><hr>
+					<p>Error:<b style="color: red; font-size: 18px;"> ' . $e->getMessage() . '</b></p><hr>'
+				);
+				return false;
+			}
+		}
+		else
+		{
+			$this->error_log('
+				<p>Model:<b style="color: cyan; font-size: 18px;"> gallery.php</b></p><hr>
+				<p>Function:<b style="color: green; font-size: 18px;"> findImageByName()</b></p><hr>
 				<p>Error:<b style="color: red; font-size: 18px;">PDO object not set</b></p><hr>'
 			);
 			return false;

@@ -1447,11 +1447,30 @@ class auth extends Controller
      && filter_has_var(INPUT_POST, 'username')
      && filter_has_var(INPUT_POST, 'password'))
     {
-      $this->register_user(
-        trim(filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)),
-        trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING)),
-        trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING))
-      );
+      /*
+      ** Validate email, username, password
+      */
+
+      $validator = $this->helper('Validate');
+
+      $result = $validator->holy_trinity([
+        'email' => trim(filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)),
+        'username' => trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING)),
+        'password' => trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING))
+      ]);
+
+      if ($result) {
+        $this->register_user(
+          trim(filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)),
+          trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING)),
+          trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING))
+        );
+      }
+      else {
+        echo json_encode([
+          'error' => 'Failed to create account'
+        ]);
+      }
     }
     else
       $this->view('auth/signup', $params);
@@ -1605,10 +1624,4 @@ class auth extends Controller
 
     echo json_encode ($response);
   }
-
-  /*
-  ** This index function is for when users try to access urls that dont
-  ** exists. this is temporar until i create my own 404 page
-  */
-
 }

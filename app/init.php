@@ -49,11 +49,13 @@ date_default_timezone_set('Africa/Johannesburg');
 define('ADMIN_EMAIL', 'andreantoniomarques19@gmail.com');
 
 /*
-** SITE_URL is the host
+** SITE_URL is the host and ROOT_DIR is document root
 ** Vars prefixed with SLACK are the oauth api endpoints used in auth.php
 */
 
+define('ROOT_DIR', $_SERVER['DOCUMENT_ROOT']);
 define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST'] . str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', dirname(__DIR__) . '/public')));
+define('SITE_HOST', 'http://' . $_SERVER['HTTP_HOST']);
 
 /*
 ** These urls will be used for slacks oauth 2.0 web flow
@@ -87,3 +89,24 @@ define('GOOGLE_PROFILE', 'https://www.googleapis.com/plus/v1/people/me');
 define('E42_AUTH', 'https://api.intra.42.fr/oauth/authorize?');
 define('E42_ACCESS', 'https://api.intra.42.fr/oauth/token');
 define('E42_PROFILE', 'https://api.intra.42.fr/v2/me');
+
+/*
+** Asset path for url (superimposable images location)
+** Asset names
+*/
+
+define('ASSET_PATH', '/Camagru/app/views/assets/');
+define('ASSET_NAME', [
+  's-1.png',
+  's-2.png',
+  's-3.png',
+  's-4.png',
+  's-5.png',
+  's-6.png'
+]);
+
+/*
+** Directory where all images will be saved
+*/
+
+define('UPLOAD_DIR', '/Camagru/app/views/uploads/');

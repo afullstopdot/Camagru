@@ -20,6 +20,21 @@ class Controller
   }
 
   /*
+  ** This function will create a new instance of a class
+  ** in the include folder, these are helper functions
+  */
+
+  protected function helper($helper)
+  {
+    if (file_exists('../app/include/' . $helper . '.php'))
+    {
+      require_once '../app/include/' . $helper . '.php';
+      return new $helper;
+    }
+    return NULL;
+  }
+
+  /*
   ** This function will render a view, if it exists
   */
 

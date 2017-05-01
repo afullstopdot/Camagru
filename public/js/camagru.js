@@ -3,8 +3,10 @@
 ** the communication will be done using Ajax
 */
 
+// var url = 'http:\/\/10.0.0.150:80\/Camagru\/public\/';
 var url = 'http:\/\/localhost:80\/Camagru\/public\/';
 // var url = 'http:\/\/afullstopdot.duckdns.org\/Camagru\/public\/';
+
 var color_red = '#710909';
 var color_blue = '#119261';
 var color_grey = '#333';
@@ -268,7 +270,7 @@ window.onload = function () {
               reset_btn.innerHTML = 'Reset Account !';
               reset_btn.style.backgroundColor = color_grey;
             }, 5000);
-            req.send(data);//send form
+            req.send(data);
           }
         }
 

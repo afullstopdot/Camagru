@@ -1,4 +1,3 @@
-
 <html lang="en">
 
   <head>
@@ -39,7 +38,6 @@
         ?>
         <li class="icon"><a href="javascript:void(0);" style="font-size:15px;" onclick="open_close()">☰</a></li>
       </ul>
-
     </header>
 
     <?php
@@ -50,7 +48,9 @@
         echo '<h1>Could not load flash</h1>'; 
       } 
     ?>
+
     <div id="loading-div" class="loader"><p style="color: white;">Loading</p></div>
+
     <?php
       if (!empty($data)) 
       {
@@ -123,15 +123,14 @@
       }
     ?>
 
-      <div id="dialog-modal" class="modal">
-        <div id="header-modal" class="modal-header"></div>
-        <div id="content-modal" class="modal-content">
-          <span id="close-modal" class="modal-close">&times;</span>
-        </div>
+    <div id="dialog-modal" class="modal">
+      <div id="header-modal" class="modal-header"></div>
+      <div id="content-modal" class="modal-content">
+        <span id="close-modal" class="modal-close">&times;</span>
       </div>
+    </div>
 
     <footer><p style="text-align: center; color: white;">developed by afullstopdot</p></footer>
-
     <script src="<?php echo SITE_URL; ?>/js/camagru.js"></script>
 
   </body>
@@ -143,6 +142,5 @@
 <!-- 
 
   If you have time, create a feature to detect if a picture has been liked by a user before
-  Also add cookies so requests on behalf of the user can be quicker
 
  -->

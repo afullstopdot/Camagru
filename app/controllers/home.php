@@ -59,7 +59,7 @@ class home extends Controller
             );
 
             $image_owner = $this->model('gallery')->imageOwner($image_id);
-            if (is_array($image) === true) {
+            if (is_array($image_owner) === true) {
               //send user email
             }
             else {
@@ -116,7 +116,7 @@ class home extends Controller
 
             //send image owner notification
             $image_owner = $this->model('gallery')->imageOwner($image_id);
-            if (is_array($image) === true) {
+            if (is_array($image_owner) === true) {
               //send user email
             }
             else {
