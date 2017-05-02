@@ -27,7 +27,7 @@ class home extends Controller
 
   public function add_like($params = [])
   {
-    if ($this->valid() === true) {
+    if ($this->valid()) {
       
       /*
       ** To add a like, an id of the image must be passed as a param
@@ -40,7 +40,7 @@ class home extends Controller
         ** Image must be a valid upload in the db
         */
 
-        if ($this->model('gallery')->validImage($image_id) === true)
+        if ($this->model('gallery')->validImage($image_id))
         {
 
           /*
@@ -52,31 +52,29 @@ class home extends Controller
             $image_id
           );
 
-          if ($result === true) {
+          if ($result) {
             echo json_encode([
               'like_status' => 200,
               'like_count' => $this->model('gallery')->getLikes($image_id)]
             );
-
-            $image_owner = $this->model('gallery')->imageOwner($image_id);
-            if (is_array($image_owner) === true) {
-              //send user email
-            }
-            else {
-              //send admin error log
-            }
           }
           else {
-            echo json_encode(['like_status' => 'Oops, can only like a picture once!']);
+            echo json_encode([
+              'like_status' => 'Oops, can only like a picture once!'
+            ]);
           }
 
         }
         else {
-          echo json_encode(['like_error' => 'Invalid image has been specified']);
+          echo json_encode([
+            'like_error' => 'Invalid image has been specified'
+          ]);
         }
       }
       else {
-        echo json_encode(['like_error' => 'No image has been specified']);
+        echo json_encode([
+          'like_error' => 'No image has been specified'
+        ]);
       }
     }
     else {
@@ -95,7 +93,7 @@ class home extends Controller
 
   public function comment($params = [])
   {
-    if ($this->valid() === true) {
+    if ($this->valid()) {
       
       /*
       ** To add a comment, a id of the image must be passed as a param
@@ -114,13 +112,37 @@ class home extends Controller
               'comment' => $comment
             ]);
 
-            //send image owner notification
+            /*
+            ** send image owner notification, first
+            ** find owner of image
+            */
+
             $image_owner = $this->model('gallery')->imageOwner($image_id);
-            if (is_array($image_owner) === true) {
-              //send user email
-            }
-            else {
-              //send admin error log
+            if (is_array($image_owner)) {
+
+              /*
+              ** Get base64_encode image for mailer
+              */
+
+              $image = ROOT_DIR . $image_owner['img_path'];
+
+              /*
+              ** Check if file exists before trying emailing link to picture
+              */
+
+              if (file_exists($image)) {
+
+                if (is_string($img) && !empty($img)) {
+                  $params = [
+                    'to' => $image_owner['email'],
+                    'name' => $image_owner['name'],
+                    'commenter' => $this->user()['username'],
+                    'comment' => $comment,
+                    'image' => SITE_HOST . $image_owner['img_path']
+                  ];
+                  $this->helper('Mailer')->comment_mail($params);
+                }
+              }
             }
           }
           else {

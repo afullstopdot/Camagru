@@ -426,7 +426,7 @@ class gallery extends Model
 			try
 			{
 				$stmt = $this->db->prepare('
-					SELECT u.email, u.username
+					SELECT u.email as email, u.username as name, img_path
 					FROM uploads as i
 					INNER JOIN users as u
 					ON i.user_id = u.user_id

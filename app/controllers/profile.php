@@ -302,20 +302,34 @@ class profile extends Controller
 	{
 		if (isset($_POST['image']) && $this->valid())
 		{
-			$id = $this->model('gallery')->findImageByName($_POST['image']);
-			// fix this feature
-			if (is_array($id)) {
-				$id = $id['image_id'];
+			$path = $this->helper('ImageUpload')->url_to_webroot($_POST['image']);
+			if (is_string($path)) {
+				$id = $this->model('gallery')->findImageByName(
+					$this->user()['user_id'], 
+					$path
+				);
+
+				if (is_array($id)) {
+					$likes = $this->model('gallery')->getLikes($id['image_id']);
+
+					echo json_encode([
+						'status' => 200,
+						'like_count' => $likes
+					]);
+				}
+				else {
+					echo json_encode([
+						'status' => 200,
+						'like_count' => 'N/A'
+					]);
+				}
 			}
 			else {
-				$id = 0;
+				echo json_encode([
+					'status' => 200,
+					'like_count' => 'N/A'
+				]);
 			}
-
-			echo json_encode([
-				'status' => 200,
-				'like_count' => rand(0, 15),
-				'extra' => $id
-			]);
 		}
 		else {
 			echo json_encode([

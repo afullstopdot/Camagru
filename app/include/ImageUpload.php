@@ -52,6 +52,9 @@ class ImageUpload
 
 	public function type($file = '')
 	{
+		if (is_string($file) && !empty($file)) {
+			return pathinfo($file, PATHINFO_EXTENSION);
+		}
 		return pathinfo($this->file['name'], PATHINFO_EXTENSION);
 	}
 
@@ -68,6 +71,21 @@ class ImageUpload
 				if ($raw) {
 					return $content;
 				}
+				return 'data:image/' . $type . ';base64,' . base64_encode($content);
+			}
+		}
+	}
+
+	/*
+	** content fo external function (not uploaded)
+	*/
+
+	public function ext_content($path)
+	{
+		if (is_string($path) && !empty($path)) {
+			$type = $this->type($path);
+			if (!empty($type)) {
+				$content = file_get_contents($path);
 				return 'data:image/' . $type . ';base64,' . base64_encode($content);
 			}
 		}
