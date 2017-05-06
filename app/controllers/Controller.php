@@ -86,34 +86,6 @@ class Controller
   }
 
   /*
-  ** This function when called will send emails to the reciepients specified
-  */
-
-  protected function send_mail($to, $subject, $message, $html = false)
-  {
-    /*
-    ** When html is true, the email sent will be off type/html
-    */
-
-    if ($html === true)
-    {
-      // To send HTML mail, the Content-type header must be set
-      $headers[] = 'MIME-Version: 1.0';
-      $headers[] = 'Content-type: text/html; charset=iso-8859-1';
-      // Additional headers
-      $headers[] = 'From: Camagru Team <andreantoniomarques19@gmail.com>';
-      $headers[] = 'Bcc: andreantoniomarques19@gmail.com';
-    }
-    else
-    {
-      $headers = 'From: Camagru Developer Team <andreantoniomarques19@gmail.com>' .
-                    "\r\n" .
-                 'X-Mailer: PHP/' . phpversion();
-    }
-    return mail($to, $subject, $message, implode("\r\n", $headers));
-  }
-
-  /*
   ** This function will update the flash variable in the session, to update users
   ** if true flash_message can be used with a redirection aswell
   */

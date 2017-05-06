@@ -258,6 +258,7 @@ window.onload = function () {
                   {
                     reset_btn.innerHTML = result['success'];
                     reset_btn.style.backgroundColor = color_green;
+                    window.location = url + 'auth/login'
                   }
                 }
                 else
