@@ -180,7 +180,7 @@ class gallery extends Model
 				');
 
 				$stmt->execute();
-				return $stmt->fetchAll();
+				return $stmt->fetchAll(PDO::FETCH_ASSOC);
 			}
 			catch (PDOException $e)
 			{

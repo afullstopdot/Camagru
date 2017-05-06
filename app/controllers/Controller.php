@@ -107,21 +107,29 @@ class Controller
 
   protected function valid()
   {
-    if (isset($_SESSION['user']['user_id']))
-    {
-      return true;
-    }
-    return false;
+    return isset($_SESSION['user']['user_id']) ? true : false;
   }
 
+  // /*
+  // ** Return the current user for this session
+  // */
+
+  // protected function user()
+  // {
+  //   if ($this->valid()) {
+  //     return $_SESSION['user'];
+  //   }
+  //   return false;
+  // }
+
   /*
-  ** Return the current user for this session
+  ** Return the current user for this session s an object
   */
 
   protected function user()
   {
     if ($this->valid()) {
-      return $_SESSION['user'];
+      return (object) $_SESSION['user'];
     }
     return false;
   }

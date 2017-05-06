@@ -12,6 +12,23 @@ class home extends Controller
     $comments = $this->model('gallery')->getComments();
     $likes = $this->model('gallery')->getLikes();
 
+    /*
+    ** Run through comments and use htmlentities
+    ** to present XSS attacks if the comments
+    ** have tags or usernames
+    */
+
+    $count = 0;
+    foreach ($comments as $comment) {
+      foreach ($comment as $key => $value) {
+        if ($key === 'comment' || $key === 'username') {
+          $comments[$count][$key] = htmlentities($value);
+          $comments[$count][$key] = strip_tags($comments[$count][$key], ENT_QUOTES);
+        }
+      }
+      $count++;
+    }
+
     $data = [
       'uploads' => $uploads,
       'comments' => $comments,
@@ -48,7 +65,7 @@ class home extends Controller
           */
           
           $result = $this->model('gallery')->addLike(
-            $this->user()['user_id'],
+            $this->user()->user_id,
             $image_id
           );
 
@@ -102,10 +119,10 @@ class home extends Controller
       $image_id = isset($params[0]) ? trim($params[0]) : NULL;
       $comment = isset($_POST['data']) ? trim($_POST['data']) : NULL;
 
-      if (isset($image_id) && $this->model('gallery')->validImage($image_id) === true) {
+      if (isset($image_id) && $this->model('gallery')->validImage($image_id)) {
         if (count($comment) > 0) {
           $comment = strip_tags($comment);
-          if ($this->model('gallery')->addComment($this->user()['username'], $image_id, $comment) === true) {
+          if ($this->model('gallery')->addComment($this->user()->username, $image_id, $comment)) {
             echo json_encode([
               'success' => true,
               'status' => 5,
@@ -136,7 +153,7 @@ class home extends Controller
                   $params = [
                     'to' => $image_owner['email'],
                     'name' => $image_owner['name'],
-                    'commenter' => $this->user()['username'],
+                    'commenter' => $this->user()->username,
                     'comment' => $comment,
                     'image' => SITE_HOST . $image_owner['img_path']
                   ];

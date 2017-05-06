@@ -1,5 +1,4 @@
 <?php
-// ini_set('display_errors', true);
 
 class profile extends Controller
 {
@@ -15,10 +14,11 @@ class profile extends Controller
 		** Only logged on users allowed here
 		*/
 
-		if ($this->valid() === true)
+		if ($this->valid())
 		{
+
 			$this->view('profile/home', [
-				'username' => $this->user()['username']
+				'username' => $this->user()->username
 			]);
 		}
 		else
@@ -179,7 +179,7 @@ class profile extends Controller
 
 								$url = $upload->absolute_to_url($res);
 								$this->model('gallery')->addUpload(
-									$this->user()['user_id'],
+									$this->user()->user_id,
 									$url
 								);
 								echo json_encode([
@@ -253,7 +253,7 @@ class profile extends Controller
 			*/
 
 			$res = $this->model('gallery')->removeUpload(
-				$this->user()['user_id'],
+				$this->user()->user_id,
 				$path
 			);
 
@@ -305,7 +305,7 @@ class profile extends Controller
 			$path = $this->helper('ImageUpload')->url_to_webroot($_POST['image']);
 			if (is_string($path)) {
 				$id = $this->model('gallery')->findImageByName(
-					$this->user()['user_id'], 
+					$this->user()->user_id, 
 					$path
 				);
 
@@ -348,7 +348,7 @@ class profile extends Controller
 		if ($this->valid())
 		{
 			$uploads = $this->model('gallery')->getThumbnails(
-				$this->user()['user_id']
+				$this->user()->user_id
 			);
 
 			if (is_array($uploads)) {
