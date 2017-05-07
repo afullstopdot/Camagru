@@ -1059,10 +1059,11 @@ function add_upload(data, comment)
                 var strong_tag = document.createElement('strong');
 
                 if (p_tag && strong_tag) {
-                  strong_tag.innerHTML = comment[i].username;
+                  strong_tag.innerHTML = comment[i].username + ' ';
                   strong_tag.style.color = 'white';
                   p_tag.appendChild(strong_tag);
                   p_tag.appendChild(document.createTextNode(comment[i].comment));
+                  comment_panel.appendChild(p_tag);
                 }
               }
             }
