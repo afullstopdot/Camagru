@@ -23,20 +23,21 @@ class gallery extends Model
 	** Each record will return the username, image path, upload time
 	*/
 
-	public function getUploads()
+	public function getUploads($page = 0)
 	{
 		if (isset($this->db))
 		{
 			try 
 			{
-				$stmt = $this->db->prepare('
+				$stmt = $this->db->prepare("
 					SELECT i.image_id, u.username, u.picture, i.img_path, i.upload_time
 					FROM uploads as i
 					INNER JOIN users as u
 					ON u.user_id = i.user_id
 					ORDER BY i.upload_time DESC
 					LIMIT 10
-				');
+					OFFSET {$page}
+				");
 
 				$stmt->execute();
 				return $stmt->fetchAll();

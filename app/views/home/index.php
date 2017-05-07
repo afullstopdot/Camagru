@@ -56,63 +56,66 @@
       {
         $likes_count = 0;
         $comments_count = 0;
-        foreach ($data['uploads'] as $value) {
+        echo '<div class="container-fluid">';
+          foreach ($data['uploads'] as $value) {
 
-          /*
-          ** Calculate # of likes and comments
-          */
+            /*
+            ** Calculate # of likes and comments
+            */
 
-          foreach ($data['likes'] as $likes) {
-            if ($value['image_id'] === $likes['image_id']) {
-              $likes_count++;
+            foreach ($data['likes'] as $likes) {
+              if ($value['image_id'] === $likes['image_id']) {
+                $likes_count++;
+              }
             }
-          }
 
-          foreach ($data['comments'] as $comments) {
-            if ($value['image_id'] === $comments['image_id']) {
-              $comments_count++;
+            foreach ($data['comments'] as $comments) {
+              if ($value['image_id'] === $comments['image_id']) {
+                $comments_count++;
+              }
             }
-          }
 
-          /*
-          ** Display all images, comments, likes
-          */
+            /*
+            ** Display all images, comments, likes
+            */
 
-          echo '
-            <div id="' . $value['image_id'] . '" class="image-card">
-              <img id="' . $value['image_id'] . '" ondblclick="like(this.id)" src="' . $value['img_path'] . '" alt="' . $value['image_id'] . '" style="width:100%">
-              <button class="accordion">
-                <div class="profile-picture">
-                  <img src="' . $value['picture'] . '" alt="' . $value['image_id'] . '" width="96" height="96">
-                  ' . $value['username'] . '
-                </div>
-                <div class="heart">
-                  <p><b id="' . $value['image_id'] . ' like-count">' . $likes_count . '</b> likes <b id="comment-count">' . $comments_count . '</b> comments</p>
-                </div>
-              </button>
-              <div class="panel">
-                <b>
-                  <span class="like-button" id="' . $value['image_id'] . '" onclick="like(this.id)">&hearts; Like</span>
-                </b>
-                <form id="comment-form" action="home/comment/' . $value['image_id'] . '" name="' . $value['image_id'] . '-form' . '" method="POST" role="form">
+            echo '
+              <div id="' . $value['image_id'] . '" class="image-card">
+                <img id="' . $value['image_id'] . '" ondblclick="like(this.id)" src="' . $value['img_path'] . '" alt="' . $value['image_id'] . '" style="width:100%">
+                <button class="accordion">
+                  <div class="profile-picture">
+                    <img src="' . $value['picture'] . '" alt="' . $value['image_id'] . '" width="96" height="96">
+                    ' . $value['username'] . '
+                  </div>
+                  <div class="heart">
+                    <p><b id="' . $value['image_id'] . ' like-count">' . $likes_count . '</b> likes <b id="comment-count">' . $comments_count . '</b> comments</p>
+                  </div>
+                </button>
+                <div class="panel">
+                  <b>
+                    <span class="like-button" id="' . $value['image_id'] . '" onclick="like(this.id)">&hearts; Like</span>
+                  </b>
+                  <form id="comment-form" action="home/comment/' . $value['image_id'] . '" name="' . $value['image_id'] . '-form' . '" method="POST" role="form">
                     <textarea name="data" class="comment-area" placeholder="LOL great pic!" rows="3"></textarea>
-                  <button type="submit" id="' . $value['image_id'] . '" name="comment-submit" class="comment-submit-button">Comment</button>
-                </form>
-                <div id="' . $value['image_id'] . '-comment-panel">';
-                  foreach ($data['comments'] as $comments) {
-                    if ($comments['image_id'] === $value['image_id']) {
-                      echo '<p><strong style="color: white;">' . $comments['username'] . '</strong> ' . $comments['comment'] . '</p>';
+                    <button type="submit" id="' . $value['image_id'] . '" name="comment-submit" class="comment-submit-button">Comment</button>
+                  </form>
+                  <div id="' . $value['image_id'] . '-comment-panel">';
+                    foreach ($data['comments'] as $comments) {
+                      if ($comments['image_id'] === $value['image_id']) {
+                        echo '<p><strong style="color: white;">' . $comments['username'] . '</strong> ' . $comments['comment'] . '</p>';
+                      }
                     }
-                  }
-          echo  '<p>&sharp;</p>
+            echo  '<p>&sharp;</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ';
+            ';
 
-          $likes_count = 0;
-          $comments_count = 0;
-        }
+            $likes_count = 0;
+            $comments_count = 0;
+          }
+        echo '</div>';
+        echo '<div class="load-more">Load More</div>';
       }
       else {
         echo '

@@ -8,6 +8,11 @@ class home extends Controller
 
   public function index($params = [])
   {
+
+    /*
+    ** Get upload data
+    */
+
   	$uploads = $this->model('gallery')->getUploads();
     $comments = $this->model('gallery')->getComments();
     $likes = $this->model('gallery')->getLikes();
@@ -34,7 +39,6 @@ class home extends Controller
       'comments' => $comments,
       'likes' => $likes
     ];
-
     $this->view('home/index', $data);
   }
 
@@ -191,4 +195,43 @@ class home extends Controller
     }
   }
 
+  /*
+  ** handle ajax request for more uploads
+  */
+
+  public function more($params = [])
+  {
+
+    /*
+    ** gallery offset passed as param from cookie
+    */
+
+    $param = isset($params[0]) ? trim($params[0]) : NULL;
+
+    if (isset($param)) {
+      $uploads = $this->model('gallery')->getUploads((int) $param * 10);
+      $comments = $this->model('gallery')->getComments();
+      if (is_array($uploads) && !empty($uploads)) {
+        echo json_encode([
+          'status' => 200,
+          'data' => $uploads,
+          'comment' => $comments,
+          'page' => (int) $param + 1
+        ]);
+      }
+      else {
+        echo json_encode([
+          'status' => 202,
+          'msg' => 'Nothing to return'
+        ]);
+      }
+    }
+    else {
+      echo json_encode([
+        'status' => 203,
+        'msg' => 'cookie not set'
+      ]);
+    }
+
+  }
 }

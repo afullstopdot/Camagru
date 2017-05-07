@@ -22,7 +22,8 @@ window.onload = function () {
 
     if (document.getElementById('loading-div') !== null) {
       document.getElementById('loading-div').style.display = 'none';
-      document.getElementById('hash').style.height = '0px';       
+      document.getElementById('hash').style.height = '0px';
+      create_cookie('page', 1, 5);
     }
 
     //Ajax registration
@@ -429,6 +430,71 @@ window.onload = function () {
         modal.style.display = 'none';
       }
     }
+
+    /*
+    ** Create pagination
+    */
+
+    var load_more = document.getElementsByClassName('load-more')[0];
+
+    if (load_more) {
+      load_more.onclick = function () {
+        var req = new XMLHttpRequest();
+
+        this.innerHTML = 'Loading...';
+        req.open('POST', url + 'home/more/' + get_cookie('page'), true);
+        req.onload = function (event) {
+          if (req.status == 200) {
+
+            var resp = JSON.parse(req.responseText);
+
+            /*
+            ** The response from camagru will be either error with a message
+            ** or success with a message
+            */
+
+            if (resp.status == 200) {
+              load_more.innerHTML = 'Load More';
+
+              /*
+              ** Update cookie page value
+              */
+              create_cookie('page', resp.page, 5);
+              
+              /*
+              ** Append uploads to home gallery
+              */
+
+              document.getElementById('loading-div').style.display = 'inline';
+              document.getElementById('hash').style.height = '100%';
+
+              //append here
+
+              for (var i = 0; i < resp.data.length; i++) {
+                add_upload(resp.data[i], resp.comment);
+              }
+
+              /*
+              ** After appending uploads to body remove loader
+              */
+
+              document.getElementById('loading-div').style.display = 'none';
+              document.getElementById('hash').style.height = '0px';
+
+            }
+            if (resp.status == 202) {
+              load_more.innerHTML = 'No more images to load';
+            }
+
+          }
+          else {
+            console.log('fail');
+          }
+        };
+        req.send();
+      }
+    }
+
 };
 
 /*
@@ -678,5 +744,347 @@ function add_comment(panel, username, text)
 
     username_e.appendChild(document.createTextNode(username));
     comment.insertBefore(username_e, comment.childNodes[0]);
+  }
+}
+
+/*
+** Create new image upload
+*/
+
+function add_upload(data, comment)
+{
+  if (data) {
+    
+    const parent = document.getElementsByClassName('container-fluid')[0];
+
+    /*
+    ** Create div image card, img , comment etc will be children
+    ** to this div
+    */
+
+    const upload = document.createElement("div");
+
+    if (upload) {
+      upload.className = "image-card";
+      upload.setAttribute("id", data.image_id);
+
+      /*
+      ** Add img tag to parent image card
+      */
+
+      const img = document.createElement('img');
+
+      if (img) {
+        img.setAttribute('id', data.image_id);
+
+        /*
+        ** Add dblclick event for like feature
+        */
+
+        img.ondblclick = function () {
+          like(img.id);
+        };
+
+        /*
+        ** set src path for image
+        */
+
+        img.src = data.img_path;
+
+        /*
+        ** Set img width
+        */
+
+        img.style.width = '100%';
+
+        /*
+        ** Append img to parent image-card
+        */
+
+        upload.appendChild(img);
+      }
+
+      /*
+      ** Add accordion button for panel etc
+      */
+
+      const accordion = document.createElement('button');
+
+      if (accordion) {
+        accordion.className = "accordion";
+
+        /*
+        ** accordion is the parent, its children will consist
+        ** of a div profile-picture aswell as div heart
+        */
+
+        const profile = document.createElement("div");
+
+        if (profile) {
+
+          profile.className = "profile-picture";
+
+          /*
+          ** img tag has user profile picture
+          */
+
+          const profile_img = document.createElement('img');
+
+          if (profile_img) {
+            profile_img.src = data.picture;
+            profile_img.style.height = '50';
+            profile_img.style.width = '50';
+
+            /*
+            ** Append profile img to profile
+            */
+
+            profile.appendChild(profile_img);
+          }
+
+          /*
+          ** Add username to profile div
+          */
+
+          profile.append(document.createTextNode(data.username));
+
+          /*
+          ** Append profile to accordion
+          */
+
+          accordion.appendChild(profile);
+        }
+
+        /*
+        ** Create heart div (like + comment coount)
+        */
+
+        const heart = document.createElement("div");
+
+        if (heart) {
+          heart.className = "heart";
+
+          /*
+          ** create p element with info about # of likes + comments
+          */
+
+          const p = document.createElement("p");
+
+          if (p) {
+            //arbitary values for likes and comments
+            p.innerHTML = 0 + " likes " + 0 + " comments";
+            heart.appendChild(p);
+          }
+          accordion.appendChild(heart);
+        }
+
+        /*
+        ** Append accordion to image card
+        */
+
+        upload.appendChild(accordion);
+      }
+
+      /*
+      ** Add panel with form for commenting and liking
+      */
+
+      const panel = document.createElement('div');
+
+      if (panel) {
+        panel.className = "panel";
+
+        /*
+        ** add like text to panel
+        */
+
+        const panel_b =  document.createElement('b');
+
+        if (panel_b) {
+          const panel_span = document.createElement('span');
+
+          if (panel_span) {
+            panel_span.className = "like-button";
+            panel_span.setAttribute('id', data.image_id);
+            panel_span.onclick = function () {
+              like(data.image_id);
+            };
+            panel_span.innerHTML = '&hearts; Like';
+            panel_b.appendChild(panel_span);
+          }
+          panel.appendChild(panel_b);
+        }
+
+        /*
+        ** When the accordion is clicked the panel will show
+        */
+
+        accordion.onclick = function() {
+          this.classList.toggle("active");
+
+          if (panel.style.maxHeight){
+            panel.style.maxHeight = null;
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+          } 
+        }
+
+        /*
+        ** Add form to panel with text area
+        */
+
+        const form = document.createElement('form');
+
+        if (form) {
+
+          /*
+          ** Form attributes
+          */
+
+          form.setAttribute('id', 'comment-form');
+          form.setAttribute('role', 'form');
+          form.action = 'home/comment/' + data.image_id;
+          form.name = data.image_id + '-form';
+          form.method = 'post';
+
+          /*
+          ** Add textarea to form
+          */
+
+          const textarea = document.createElement('textarea');
+
+          if (textarea) {
+            textarea.name = 'data';
+            textarea.className = 'comment-area';
+            textarea.placeholder = 'LOL great pic!';
+            textarea.rows = '3';
+
+            /*
+            ** Append to form
+            */
+
+            form.appendChild(textarea);
+          }
+
+          /*
+          ** Create form submit button
+          */
+
+          const button = document.createElement('button');
+
+          if (button) {
+            button.type = 'submit';
+            button.setAttribute('id', data.image_id);
+            button.name = 'comment-submit';
+            button.className = 'comment-submit-button';
+            button.innerHTML = 'Comment';
+
+            /*
+            ** Add on click event for button
+            */
+
+            button.onclick = function (e) {
+              var id = this.id;
+              var comment = document.forms[id + '-form'];
+              var button = this;
+
+              if (comment) {
+                if (comment.data.value != '') {
+                  var data = new FormData(comment);
+                  var req = new XMLHttpRequest();
+
+                  button.innerHTML = 'Posting ...';
+                  button.style.backgroundColor = color_blue;
+                  req.open('POST', comment.action, true);
+                  req.onload = function (event) {
+                    if (req.status == 200)
+                    {
+                      var result = JSON.parse(req.responseText);
+
+                      if (result.success === true) {
+                        button.style.backgroundColor = color_green;
+                        button.innerHTML = 'Comment posted!';
+                        add_comment(id + '-comment-panel', get_cookie('username'), result.comment);
+                        comment.data.value = '';
+                      }
+                      else {
+                        button.style.backgroundColor = color_red;
+                        if (result.status === 1) {
+                          button.innerHTML = 'Log in to comment';
+                        }
+                        if (result.status === 2) {
+                          button.innerHTML = 'Image not specified/invalid';
+                        }
+                      }
+                    }
+                    else
+                    {
+                      button.style.backgroundColor = color_red;
+                      button.innerHTML = 'Oops Camagru error!';
+                    }
+                  };
+                  req.send(data);
+                }
+                else {
+                  button.innerHTML = 'Write something!';
+                }
+                window.setTimeout(function () {
+                  button.innerHTML = 'Comment';
+                  button.style.backgroundColor = color_grey;
+                }, 5000);
+              }
+              //end
+              e.preventDefault();
+            }
+
+            /*
+            ** Append to form
+            */
+
+            form.appendChild(button);
+          }
+          panel.appendChild(form);
+
+          /*
+          ** Create comment panel with list of previous comments of a picture
+          */
+
+          const comment_panel = document.createElement('div');
+
+          if (comment_panel) {
+            comment_panel.setAttribute('id', data.image_id + '-comment-panel');
+            for (var i = 0; i < comment.length; i++) {
+              if (comment[i].image_id === data.image_id) {
+                var p_tag = document.createElement('p');
+                var strong_tag = document.createElement('strong');
+
+                if (p_tag && strong_tag) {
+                  strong_tag.innerHTML = comment[i].username;
+                  strong_tag.style.color = 'white';
+                  p_tag.appendChild(strong_tag);
+                  p_tag.appendChild(document.createTextNode(comment[i].comment));
+                }
+              }
+            }
+          }
+
+          panel.appendChild(comment_panel);
+        }
+        upload.appendChild(panel);
+      }
+
+
+
+      /*
+      ** Append parent to body
+      */
+
+      if (parent) {
+        parent.appendChild(upload);
+      }
+      else {
+        document.body.appendChild(upload);
+      }
+    }
   }
 }
