@@ -471,7 +471,7 @@ window.onload = function () {
               //append here
 
               for (var i = 0; i < resp.data.length; i++) {
-                add_upload(resp.data[i], resp.comment);
+                add_upload(resp.data[i], resp.comment, resp.likes);
               }
 
               /*
@@ -751,10 +751,10 @@ function add_comment(panel, username, text)
 ** Create new image upload
 */
 
-function add_upload(data, comment)
+function add_upload(data, comment, img_likes)
 {
-  if (data) {
-    
+  if (data && comment && img_likes) {
+    var heart_tag;
     const parent = document.getElementsByClassName('container-fluid')[0];
 
     /*
@@ -869,6 +869,7 @@ function add_upload(data, comment)
           */
 
           const p = document.createElement("p");
+          heart_tag = p;
 
           if (p) {
             //arbitary values for likes and comments
@@ -1052,12 +1053,33 @@ function add_upload(data, comment)
           const comment_panel = document.createElement('div');
 
           if (comment_panel) {
+            var comment_count = 0;
+            var like_count = 0;
+
             comment_panel.setAttribute('id', data.image_id + '-comment-panel');
+
+            /*
+            ** Update like count
+            */
+
+            for (var a = 0; a < img_likes.length; a++) {
+              if (img_likes[a].image_id === data.image_id) {
+                  like_count++;
+                  heart_tag.innerHTML = like_count + ' likes ' + comment_count + ' comments';
+              }
+            }
+
             for (var i = 0; i < comment.length; i++) {
               if (comment[i].image_id === data.image_id) {
                 var p_tag = document.createElement('p');
                 var strong_tag = document.createElement('strong');
 
+                /*
+                ** Update comment count
+                */
+
+                comment_count++;
+                heart_tag.innerHTML = like_count + ' likes ' + comment_count + ' comments';
                 if (p_tag && strong_tag) {
                   strong_tag.innerHTML = comment[i].username + ' ';
                   strong_tag.style.color = 'white';
