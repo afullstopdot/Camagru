@@ -140,7 +140,6 @@ class home extends Controller
 
             $image_owner = $this->model('gallery')->imageOwner($image_id);
             if (is_array($image_owner)) {
-
               /*
               ** Get base64_encode image for mailer
               */
@@ -152,8 +151,7 @@ class home extends Controller
               */
 
               if (file_exists($image)) {
-
-                if (is_string($img) && !empty($img)) {
+                if (is_string($image_owner['img_path']) && !empty($image_owner['img_path'])) {
                   $params = [
                     'to' => $image_owner['email'],
                     'name' => $image_owner['name'],
@@ -209,13 +207,15 @@ class home extends Controller
     $param = isset($params[0]) ? trim($params[0]) : NULL;
 
     if (isset($param)) {
-      $uploads = $this->model('gallery')->getUploads((int) $param * 10);
+      $uploads  = $this->model('gallery')->getUploads((int) $param * 10);
       $comments = $this->model('gallery')->getComments();
+      $likes    = $this->model('gallery')->getLikes();
       if (is_array($uploads) && !empty($uploads)) {
         echo json_encode([
           'status' => 200,
           'data' => $uploads,
           'comment' => $comments,
+          'likes' => $likes,
           'page' => (int) $param + 1
         ]);
       }
@@ -232,6 +232,5 @@ class home extends Controller
         'msg' => 'cookie not set'
       ]);
     }
-
   }
 }
