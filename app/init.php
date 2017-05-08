@@ -32,7 +32,8 @@ try
 }
 catch (PDOException $e)
 {
-  echo 'Camagru Internal Server Error: ' . $e->getMessage();
+  echo 'Camagru Internal Server Error: ';
+  // echo 'Camagru Internal Server Error: ' . $e->getMessage();
   exit();
 }
 
