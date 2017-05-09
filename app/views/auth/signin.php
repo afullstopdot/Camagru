@@ -30,10 +30,10 @@
         <button id="signin-button" type="submit" style="background-color: #333; font-family: 'Architects Daughter', cursive;">Log me in !</button>
         <fieldset id="leglin"><legend align="center"><p style="color: white;">or</p></legend></fieldset>
         <div id="oauth">
-          <a href="/Camagru/public/auth/slack/signin"><button id="slack" style="font-family: 'Architects Daughter', cursive;" type="button">Slack</button></a>
-          <a href="/Camagru/public/auth/google/signin"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
-          <a href="/Camagru/public/auth/fourtytwo/signin"><button id="fourty" style="font-family: 'Architects Daughter', cursive;" type="button">42</button></a>
-          <a href="/Camagru/public/auth/github/signin"><button id="github" style="font-family: 'Architects Daughter', cursive; color: black;" type="button">Github</button></a>
+          <a href="<?php echo SITE_HOST; ?>/auth/slack/signin"><button id="slack" style="font-family: 'Architects Daughter', cursive;" type="button">Slack</button></a>
+          <a href="<?php echo SITE_HOST; ?>/google/signin"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
+          <a href="<?php echo SITE_HOST; ?>/auth/fourtytwo/signin"><button id="fourty" style="font-family: 'Architects Daughter', cursive;" type="button">42</button></a>
+          <a href="<?php echo SITE_HOST; ?>/auth/github/signin"><button id="github" style="font-family: 'Architects Daughter', cursive; color: black;" type="button">Github</button></a>
         </div>
       </div>
     </form>

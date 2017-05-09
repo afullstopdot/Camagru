@@ -88,5 +88,6 @@ try
 }
 catch (PDOException $e)
 {
-  die('FATAL ERROR: ' . $e->getMessage());
+  die('<h1 style="text-align: center;">Something terrible has happend with the db</h2>');
+  //die('FATAL ERROR: ' . $e->getMessage()); //for debugging
 }

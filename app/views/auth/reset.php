@@ -26,7 +26,7 @@
               <label><b class="p-text" id="b-password" style="color: #14D385;">Confirm password</b></label>
               <p id="err-password" style="color: red; display: none; font-style: bold;">:</p>
               <input id="password2" type="password" placeholder="8 characters minimum" name="password2" required>
-              <button id="reset-button" type="submit" style="background-color: #333; font-family: "Architects Daughter", cursive;">Reset account!</button>
+              <button id="reset-button" type="submit">Reset account!</button>
             </div>
           '; 
         } else { 
@@ -36,7 +36,7 @@
               <label><b class="p-text" id="b-email" style="color: #14D385;">E-mail</b></label>
               <p id="err-email" style="color: red; display: none; font-style: bold;">:</p>
               <input id="email" type="email" placeholder="placeholder@domain.com" name="email" required>
-              <button id="reset-button" type="submit" style="background-color: #333; font-family: "Architects Daughter", cursive;">Reset account!</button>
+              <button id="reset-button" type="submit">Reset account!</button>
             </div>
           '; 
         }

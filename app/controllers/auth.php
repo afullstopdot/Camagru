@@ -15,7 +15,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if ($this->valid() === true)
+    if ($this->valid())
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -332,7 +332,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if ($this->valid() === true)
+    if ($this->valid())
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -371,8 +371,8 @@ class auth extends Controller
         ** token request
         */
 
-        $post = 'client_id=30219036481.128455242609&' .
-        'client_secret=3f1dc2dd6db5ba0113dfea80100f6b36&' .
+        $post = 'client_id=129628266690.180978312165&' .
+        'client_secret=e3c10f2daa7bb1b1175782e5d443c66c&' .
         'code=' . $_GET['code'] . '&' .
         'redirect_uri=' . SITE_URL . '/auth/slack/signup&';
 
@@ -594,7 +594,7 @@ class auth extends Controller
         $_SESSION['slack_state'] = $this->get_state(time() . rand(0, 121));
 
         $auth_url = SLACK_AUTH .
-        'client_id=' . '30219036481.128455242609&' .
+        'client_id=' . '129628266690.180978312165&' .
         'scope=' . 'users.profile:read&' .
         'redirect_uri=' . SITE_URL . '/auth/slack/signup&' .
         'state=' . $_SESSION['slack_state'];
@@ -624,7 +624,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if ($this->valid() === true)
+    if ($this->valid())
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -865,7 +865,7 @@ class auth extends Controller
     ** Users only allowed here if they are not logged on
     */
 
-    if ($this->valid() === true)
+    if ($this->valid())
     {
       $this->flash_message(
         'Oops, you are already signed in!',
@@ -875,7 +875,6 @@ class auth extends Controller
     }
 
     $param = isset($params[0]) ? trim($params[0]) : NULL;
-
     if ($param === 'signup' || $param === 'signin')
     {
 
@@ -1456,7 +1455,7 @@ class auth extends Controller
     ** Redirect home if logged in
     */
 
-    if ($this->valid() === true)
+    if ($this->valid())
     {
       $this->flash_message(
         "ops, you're already signed in!",

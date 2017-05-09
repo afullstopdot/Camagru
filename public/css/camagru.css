@@ -72,7 +72,7 @@ footer
 
 #google
 {
-  width: 25%;
+  width: 23.5%;
   height: 45px;
   display: ìnline;
   background-color: #D70606;
@@ -161,6 +161,8 @@ input[type=text], input[type=password], input[type=email]
   border: 1px solid #ccc;
   box-sizing: border-box;
   font-family: 'Shadows Into Light', cursive;
+  font-size: 1.1em;
+  font-weight: bolder;
 }
 
 button
@@ -398,6 +400,13 @@ textarea {
     padding-bottom: 10px;
     font-size: 1.4em;
     cursor: pointer;
+}
+
+#reset-button {
+  background-color: #333; 
+  font-family: "Shadows Into Light", cursive;
+  font-size: 1.1em;
+  letter-spacing: 0.1em;
 }
 
 .load-more:hover {

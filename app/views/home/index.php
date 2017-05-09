@@ -29,7 +29,7 @@
     <div id="loading-div" class="loader"><p style="color: white;">Loading</p></div>
 
     <?php
-      if (!empty($data)) 
+      if (!empty($data['uploads'])) 
       {
         $likes_count = 0;
         $comments_count = 0;

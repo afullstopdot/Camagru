@@ -275,7 +275,7 @@ class profile extends Controller
 
 					if (!unlink(ROOT_DIR . $path)) {
 						file_put_contents(
-							ROOT_DIR . '/Camagru/app/logs/profile.txt',
+							ROOT_DIR . '/app/logs/profile.txt',
 							'Unable to delete: ' . $path
 						);
 					}
@@ -291,6 +291,13 @@ class profile extends Controller
 					'message' => 'Unable to remove image'
 				]);
 			}
+		}
+		else {
+			$this->flash_message(
+			  'Invalid request #respawn',
+			  'warning',
+			  SITE_URL . '/home'
+			);
 		}
 	}
 
@@ -370,5 +377,20 @@ class profile extends Controller
 				'message' => 'unauthorized access'
 			]);
 		}
+	}
+
+	/*
+	** This index function is for when users try to access urls that dont
+	** exists. this is temporar until i create my own 404 page
+	*/
+
+
+	public function index($params = [])
+	{
+		$this->flash_message(
+		  '404 page not found',
+		  'danger',
+		  SITE_URL . '/profile/home'
+		);
 	}
 }
