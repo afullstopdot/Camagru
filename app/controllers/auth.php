@@ -744,6 +744,11 @@ class auth extends Controller
             $response['emails'][0]['value'] :
             'N/A';
 
+          $picture = isset($response['image']['url']) ? 
+            $response['image']['url'] :
+            'N/A';
+
+
           /*
           ** check that the username and he email are not already registered
           */

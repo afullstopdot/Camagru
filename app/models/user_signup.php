@@ -8,7 +8,7 @@ require_once 'Model.php';
 ** This model will be used for user signup interaction with db
 */
 
-class user_signup
+class user_signup extends Model
 {
   private $db;
 
@@ -179,16 +179,16 @@ class user_signup
       'username' => 'OK'
     ];
 
-    if ($this->perm_email_exists($email) == true) {
+    if ($this->perm_email_exists($email)) {
       $response['email'] = 'The e-mail is taken already!';
     }
-    if ($this->perm_username_exists($username) == true) {
+    if ($this->perm_username_exists($username)) {
       $response['username'] = 'The username is taken already!';
     }
-    if ($this->temp_username_exists($username) == true) {
+    if ($this->temp_username_exists($username)) {
       $response['username'] = 'Account pending verification!';
     }
-    if ($this->temp_email_exists($email) == true) {
+    if ($this->temp_email_exists($email)) {
       $response['email'] = 'Account pending verification!';
     }
     return ($response);
@@ -297,21 +297,4 @@ class user_signup
       }
     }
   }
-
-  /*
-  ** This is the function i will use to encrypt passwords in the db
-  ** break te password into an array hash each charcater using md5 and append it
-  ** to the final password, finally we hash the final.
-  */
-
-  private function password_hash($password)
-  {
-    $arr = str_split($password);
-
-    foreach ($arr as $key) {
-      $final .= md5($key);
-    }
-    return hash('whirlpool', $final);
-  }
-
 }
