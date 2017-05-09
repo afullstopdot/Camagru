@@ -1,38 +1,22 @@
 <html lang="en">
 
-  <head>
-    <title>Camagru - Log In</title>
-    <meta name="viewport" charset="UTF-8" content="width=device-width, initial scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Architects+Daughter|Shadows+Into+Light" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="<?php echo SITE_URL; ?>/css/camagru.css">
-  </head>
-
-  <body style="background-image: url('<?php 
-                                        if (($ran = rand(0, 2)) == 0) { 
-                                          echo SITE_URL . "/imgs/0.jpg"; 
-                                        } else if ($ran == 1) { 
-                                          echo SITE_URL . "/imgs/2.jpg"; 
-                                        } else { 
-                                          echo SITE_URL . "/imgs/1.jpg"; 
-                                        } 
-                                    ?>');">
-
+  <?php if (file_exists(ROOT_DIR . '/app/views/partials/header.php')) { $title = "Log In"; require_once ROOT_DIR . '/app/views/partials/header.php'; } ?>
+  
     <header>
 
       <ul class="topnav" id="myTopnav">
-        <li><a class="active" href="/Camagru/public/home" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
-        <li><a href="/Camagru/public/auth/reset">Reset Account</a></li>
-        <?php if (isset($_SESSION['user'])) { echo '<li><a href="/Camagru/public/auth/logout">Log out</a></li>'; } ?>
+        <li><a class="active" href="<?php echo SITE_HOST; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
+        <li><a href="<?php echo SITE_HOST; ?>/auth/reset">Reset Account</a></li>
+        <?php if (isset($_SESSION['user'])) { echo '<li><a href="' . SITE_HOST . '/auth/logout">Log out</a></li>'; } ?>
         <li class="icon"><a href="javascript:void(0);" style="font-size:15px;" onclick="open_close()">☰</a></li>
       </ul>
 
 
     </header>
 
+    <?php if (file_exists(ROOT_DIR . '/app/views/flash/flash.php')) { require_once ROOT_DIR . '/app/views/flash/flash.php'; } ?>
 
-    <?php if (file_exists('../app/views/flash/flash.php')) { require_once '../app/views/flash/flash.php'; } else { echo '<h1>Could not load flash</h1>'; } ?>
-
-    <form id="signin" name="signin" action="/Camagru/public/auth/login" method="POST">
+    <form id="signin" name="signin" action="<?php echo SITE_HOST; ?>/auth/login" method="POST">
       <div class="container">
         <h3 class="info-text" style="color: gold; text-align: center;">Log in to create, share & like pics!</h3>
         <label><b class="p-text" id="b-email" style="color: #14D385;">E-mail</b></label>
@@ -54,12 +38,6 @@
       </div>
     </form>
 
-
-    <footer><p style="text-align: center; color: white;">developed by afullstopdot</p></footer>
-
-    <script src="<?php echo SITE_URL; ?>/js/camagru.js"></script>
-  </body>
+    <?php if (file_exists(ROOT_DIR . '/app/views/partials/footer.php')) { require_once ROOT_DIR . '/app/views/partials/footer.php'; } ?>
 
 </html>
-
-<?php if (isset($_SESSION['flash'])) { unset($_SESSION['flash']); } ?>

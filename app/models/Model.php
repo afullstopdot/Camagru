@@ -15,6 +15,7 @@ class Model
 
   protected function password_hash($password)
   {
+    $final = '';
     $arr = str_split($password);
 
     foreach ($arr as $key) {

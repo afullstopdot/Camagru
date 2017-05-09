@@ -16,12 +16,12 @@ class App
   {
     $url = $this->parseUrl();
 
-    if (file_exists('../app/controllers/' . $url['controller'] . '.php'))
+    if (file_exists(ROOT_DIR . '/app/controllers/' . $url['controller'] . '.php'))
     {
       $this->controller = $url['controller'];
     }
 
-    require_once '../app/controllers/' . $this->controller . '.php';
+    require_once ROOT_DIR . '/app/controllers/' . $this->controller . '.php';
 
     $this->controller = new $this->controller;
 

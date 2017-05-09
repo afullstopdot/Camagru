@@ -11,9 +11,9 @@ class Controller
 
   protected function model($model)
   {
-    if (file_exists('../app/models/' . $model . '.php'))
+    if (file_exists(ROOT_DIR . '/app/models/' . $model . '.php'))
     {
-      require_once '../app/models/' . $model . '.php';
+      require_once ROOT_DIR . '/app/models/' . $model . '.php';
       return new $model(self::$db);
     }
     return NULL;
@@ -26,9 +26,9 @@ class Controller
 
   protected function helper($helper)
   {
-    if (file_exists('../app/include/' . $helper . '.php'))
+    if (file_exists(ROOT_DIR . '/app/include/' . $helper . '.php'))
     {
-      require_once '../app/include/' . $helper . '.php';
+      require_once ROOT_DIR . '/app/include/' . $helper . '.php';
       return new $helper;
     }
     return NULL;
@@ -40,9 +40,9 @@ class Controller
 
   protected function view($view, $data = [])
   {
-    if (file_exists('../app/views/' . $view . '.php'))
+    if (file_exists(ROOT_DIR . '/app/views/' . $view . '.php'))
     {
-      require_once '../app/views/' . $view . '.php';
+      require_once ROOT_DIR . '/app/views/' . $view . '.php';
     }
   }
 

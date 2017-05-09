@@ -1,5 +1,7 @@
 <?php
 
+define('ROOT_DIR', $_SERVER['DOCUMENT_ROOT']);
+
 /*
 ** Require all dependincies (if dependencies dont exist exit before crash)
 ** to create new instance, also define values and set the timezone etc
@@ -7,9 +9,9 @@
 
 session_start();
 
-require_once 'core/App.php';
-require_once 'controllers/Controller.php';
-require_once 'config/database.php';
+require_once ROOT_DIR . '/app/core/App.php';
+require_once ROOT_DIR . '/app/controllers/Controller.php';
+require_once ROOT_DIR . '/app/config/database.php';
 
 /*
 ** Create pdo object and assign it to the controller class if it doesnt exist,
@@ -28,7 +30,7 @@ try
   }
   else
     $db = Controller::getDB();
-  require_once ('config/setup.php');
+  require_once (ROOT_DIR . '/app/config/setup.php');
 }
 catch (PDOException $e)
 {
@@ -54,8 +56,7 @@ define('ADMIN_EMAIL', 'andreantoniomarques19@gmail.com');
 ** Vars prefixed with SLACK are the oauth api endpoints used in auth.php
 */
 
-define('ROOT_DIR', $_SERVER['DOCUMENT_ROOT']);
-define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST'] . str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', dirname(__DIR__) . '/public')));
+define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST'] . str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', dirname(__DIR__))));
 define('SITE_HOST', 'http://' . $_SERVER['HTTP_HOST']);
 
 /*
@@ -96,7 +97,7 @@ define('E42_PROFILE', 'https://api.intra.42.fr/v2/me');
 ** Asset names
 */
 
-define('ASSET_PATH', '/Camagru/app/views/assets/');
+define('ASSET_PATH', '/app/views/assets/');
 define('ASSET_NAME', [
   's-1.png',
   's-2.png',
@@ -110,4 +111,4 @@ define('ASSET_NAME', [
 ** Directory where all images will be saved
 */
 
-define('UPLOAD_DIR', '/Camagru/app/views/uploads/');
+define('UPLOAD_DIR', '/app/views/uploads/');

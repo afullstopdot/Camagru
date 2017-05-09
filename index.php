@@ -1,8 +1,9 @@
 <?php
 
-// ini_set('display_errors', true);
+ini_set('display_errors', true);
+
 try {
-	require_once '../app/init.php';
+	require_once 'app/init.php';
 	$app = new App;
 }
 catch (Exception $e) {
