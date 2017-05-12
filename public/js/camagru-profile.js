@@ -112,48 +112,50 @@ window.onload =  () => {
 	if (file)
 	{
 		file.onchange = () => {
-			const label = document.getElementById('file-label');
+			if (!state.cam) {
+				const label = document.getElementById('file-label');
 
-			if (form) {
-				const data = new FormData(form);
-				const req = new XMLHttpRequest();
+				if (form) {
+					const data = new FormData(form);
+					const req = new XMLHttpRequest();
 
-				req.open('POST', url + 'profile/validate', true);
-				req.onload = function (e) {
-					if (req.status == 200) {
-						const res = JSON.parse(req.responseText);
-						const img = document.getElementById('image-preview');
+					req.open('POST', url + 'profile/validate', true);
+					req.onload = function (e) {
+						if (req.status == 200) {
+							const res = JSON.parse(req.responseText);
+							const img = document.getElementById('image-preview');
 
-						if (img && options && res.status == 200) {
-							var img_width;
+							if (img && options && res.status == 200) {
+								var img_width;
 
-							img.src = res.image;
-							allow_preview = true;
-							if (screen.width <= 680) {
-								img_width = '100%';
+								img.src = res.image;
+								allow_preview = true;
+								if (screen.width <= 680) {
+									img_width = '100%';
+								}
+								else {
+									img_width = '475px';
+								}
+								img.style.width = img_width;
+								options.style.display = 'inline-block';
+								if (label) {
+									const background = label.style.background;
+
+									label.style.background = 'rgba(23, 195, 13, 0.77)';
+									label.innerHTML = 'Change image here'
+									window.setTimeout(function () {
+						              label.style.background = background;
+						              label.innerHTML = 'Upload image'
+						            }, 5000);
+								}
 							}
 							else {
-								img_width = '475px';
-							}
-							img.style.width = img_width;
-							options.style.display = 'inline-block';
-							if (label) {
-								const background = label.style.background;
-
-								label.style.background = 'rgba(23, 195, 13, 0.77)';
-								label.innerHTML = 'Change image here'
-								window.setTimeout(function () {
-					              label.style.background = background;
-					              label.innerHTML = 'Upload image'
-					            }, 5000);
+								console.log('status: ' + res.status);
 							}
 						}
-						else {
-							console.log('status: ' + res.status);
-						}
-					}
-				};
-				req.send(data);
+					};
+					req.send(data);
+				}
 			}
 		};
 	}
@@ -166,43 +168,45 @@ window.onload =  () => {
 	if (form)
 	{
 		form.addEventListener('submit', (e) => {
-			const data = new FormData(form);
-			const req = new XMLHttpRequest();
- 
-			if (asset.index > -1) {
-				data.append(
-					'selection',
-					asset.index
-				);
+			if (!state.cam) {
+				const data = new FormData(form);
+				const req = new XMLHttpRequest();
+	 
+				if (asset.index > -1) {
+					data.append(
+						'selection',
+						asset.index
+					);
 
-				if (button) {
-					button.innerHTML = 'Processing image...';
-				}
-				req.open('POST', url + 'profile/save', true);
-				req.onload = (e) => {
-					if (req.status == 200) {
-						const resp = JSON.parse(req.responseText);
-
-						if (resp.status == 200) {
-							button.innerHTML = 'Image has been uploaded!';
-							add_thumbnail(thumbnail, resp.path, modal, form, modal_img, true);
-							reset_preview(png, button, allow_preview);
-							window.setTimeout(function () {
-								button.innerHTML = 'Snap!';
-								button.style.background = 'rgba(28, 33, 30, 0.46)';
-				            }, 2000);
-						}
-						else {
-							button.innerHTML = 'Oops, error occured';
-						}
+					if (button) {
+						button.innerHTML = 'Processing image...';
 					}
-				};
-				req.send(data);
-				e.preventDefault();
+					req.open('POST', url + 'profile/save', true);
+					req.onload = (e) => {
+						if (req.status == 200) {
+							const resp = JSON.parse(req.responseText);
+
+							if (resp.status == 200) {
+								button.innerHTML = 'Image has been uploaded!';
+								add_thumbnail(thumbnail, resp.path, modal, form, modal_img, true);
+								reset_preview(png, button, allow_preview);
+								window.setTimeout(function () {
+									button.innerHTML = 'Snap!';
+									button.style.background = 'rgba(28, 33, 30, 0.46)';
+					            }, 2000);
+							}
+							else {
+								button.innerHTML = 'Oops, error occured';
+							}
+						}
+					};
+					req.send(data);
+				}
 			}
 			else {
-				console.log('Asset not selected');
+				//snap picture with cam and send base64 3ncoded img to profile/save
 			}
+			e.preventDefault();
 		}, false);
 	}
 
@@ -448,6 +452,68 @@ window.onload =  () => {
     	}
       }; 
     }
+
+    /*
+    ** Access webcam
+    */
+
+    (function(state) {
+    	if (state.cam) {
+    		const upload 	= document.getElementById('image-preview');
+    		const video 	= document.getElementById('cam-preview');
+    		const width 	= 475;
+    		var height 		= 500;
+    		var streaming 	= false;
+
+    		if (typeof upload !== 'undefined' && typeof video !== 'undefined') {
+
+				/*
+				** Constrainst for getUserMedia, request video only
+				*/
+
+				const constraints = {
+			      audio: false, 
+			      video: true
+			    };
+
+			    /*
+			    ** Make promise to getUserMedia
+			    */
+
+			    navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+			    	video.srcObject = stream;
+			        video.onloadedmetadata = function (e) {
+			        	video.play();
+			            video.addEventListener('canplay', function(e) {
+
+			              /*
+			              ** If the video can be played then we set the webcam resolution
+			              */
+
+			              if (!streaming) {
+
+			                /*
+			                ** Update video element attributes, streaming is now true
+			                */
+
+			                canvas.setAttribute('width', width);
+			                canvas.setAttribute('height', height);
+			                streaming = true;
+			              }
+			            }, false);
+			        };
+			    }).catch(function (err) {
+
+					/*
+					** On error update user, for dev just log error to console
+					*/
+
+					console.log(err.name + ": " + err.message);
+			    });
+			}
+    	}
+    })(state);
+
 };
 
 /*
@@ -653,5 +719,35 @@ function close_modal(modal, form, likes)
 		modal.style.display = 'none';
 		form.style.opacity = '1';
 		likes.innerHTML = '?';
+	}
+}
+
+/*
+** Take still picture with webcam
+*/
+
+function snap() {
+	const video = document.getElementById('cam-preview');
+
+	if (typeof video !== 'undefined') {
+  		const 	photo = document.getElementById('image-preview');
+  		var 	data;
+
+  		if (typeof video !== 'undefined') {
+
+  			/*
+			** Hide video element and show canvas,
+			** draw on the canvas
+			*/
+
+			video.style.display = "none";
+			canvas.style.display = "block";
+			startbutton.innerHTML = "RETAKE";
+			canvas.width = width;
+			canvas.height = height;
+
+			//working on insta
+
+  		}
 	}
 }
