@@ -1354,7 +1354,13 @@ class auth extends Controller
   {
   
     if ($this->valid()) {
-      session_destroy();
+      
+      /*
+      ** Remove the user session by replacing data
+      */
+
+      $_SESSION = [];
+
       $this->flash_message(
         'Yayy, successfully logged out!',
         'success',

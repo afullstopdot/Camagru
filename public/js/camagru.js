@@ -3,9 +3,7 @@
 ** the communication will be done using Ajax
 */
 
-// var url = 'http:\/\/10.0.0.150:80\/Camagru\/public\/';
-var url = 'http:\/\/localhost:80\/';
-// var url = 'http:\/\/afullstopdot.duckdns.org\/Camagru\/public\/';
+var url = 'http:\/\/localhost\/';
 
 var color_red = '#710909';
 var color_blue = '#119261';
@@ -494,7 +492,6 @@ window.onload = function () {
         req.send();
       }
     }
-
 };
 
 /*
@@ -748,7 +745,7 @@ function add_comment(panel, username, text)
 }
 
 /*
-** Create new image upload
+** Create new image upload, this is reallly long bleh
 */
 
 function add_upload(data, comment, img_likes)

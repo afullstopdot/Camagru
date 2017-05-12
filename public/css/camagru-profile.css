@@ -335,6 +335,16 @@ h2 {
     cursor: pointer;
 }
 
+#cam-preview {
+	height: 500px;
+    width: 475px;
+    display: none;
+}
+
+#cam-canvas {
+	display: none;
+}
+
 @media screen and (max-width:680px) {
 	#image-form {
 		width: 100%;

@@ -47,6 +47,16 @@ window.onload =  () => {
 	}
 
 	/*
+	** Create a toggle feature between webcam and upload
+	** state will keep update what state is currently used
+	*/
+
+	var state = {
+	  cam: false
+	};
+
+
+	/*
 	** Once the page is loaded remove loader and z-indexed center
 	*/
 
@@ -360,6 +370,84 @@ window.onload =  () => {
 			likes.innerHTML = '?';
 		};
 	}
+
+	/*
+    ** Toggle webcam and file upload
+    */
+
+    const toggle = document.getElementsByClassName('toggle')[0];
+
+    if (toggle) {
+      toggle.onclick =  function (e) {
+
+      	/*
+      	** Check what the state is and update the object
+      	*/
+
+      	if (state.cam) {
+      		state.cam = false;
+
+      		/*
+      		** Hide the video element, webcam is in use
+      		*/
+
+      		const upload = document.getElementById('image-preview');
+	        const input = document.getElementById('file');
+	        const label = document.getElementById('file-label');
+
+      		if (typeof upload !== 'undefined' && 
+      			typeof input !== 'undefined'  &&
+      			typeof label !== 'undefined') {
+
+      			/*
+      			** Hide the img preview
+      			*/
+
+      			upload.style.display = 'inline-block';
+      			input.disabled = false;
+      			label.style.background = 'rgba(11, 199, 220, 0.38)';
+      			label.innerHTML = 'Upload Image';
+
+      			const video = document.getElementById('cam-preview');
+
+      			if (typeof video !== 'undefined') {
+      				video.style.display = 'none';
+      			}
+      		}
+      	}
+      	else {
+	        state.cam = true;
+
+	        /*
+	        ** Show the video element, file upload is in use
+	        */
+
+	        const upload = document.getElementById('image-preview');
+	        const input = document.getElementById('file');
+	        const label = document.getElementById('file-label');
+
+      		if (typeof upload !== 'undefined' && 
+      			typeof input !== 'undefined'  &&
+      			typeof label !== 'undefined') {
+
+      			/*
+      			** Hide the img preview
+      			*/
+
+      			upload.style.display = 'none';
+      			input.disabled = true;
+      			label.style.background = 'rgb(27, 30, 27)';
+      			label.innerHTML = 'Upload Disabled';
+
+      			const video = document.getElementById('cam-preview');
+
+      			if (typeof video !== 'undefined') {
+      				video.style.display = 'inline-block';
+      			}
+      		}
+    	}
+      }; 
+    }
 };
 
 /*

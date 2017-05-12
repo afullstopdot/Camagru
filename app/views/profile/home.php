@@ -25,7 +25,10 @@
         <li><a class="active" href="<?php echo SITE_HOST; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
         <?php 
           if (isset($_SESSION['user'])) { 
-            echo '<li><a href="' . SITE_HOST . '/auth/logout">Log out</a></li>'; 
+            echo '
+              <li><a href="' . SITE_HOST . '/auth/logout">Log out</a></li>
+              <li class="toggle"><a href="#">Toggle</a></li>
+            '; 
           } 
           else { 
             echo '<li><a href="' . SITE_HOST . '/auth/login">Log in</a></li>'; 
@@ -33,7 +36,6 @@
         ?>
         <li class="icon"><a href="javascript:void(0);" style="font-size:15px;" onclick="open_close()">☰</a></li>
       </ul>
-
     </header>
 
     <?php if (file_exists(ROOT_DIR . '/app/views/flash/flash.php')) { require_once ROOT_DIR . '/app/views/flash/flash.php'; } ?>
@@ -46,6 +48,8 @@
         <label id="file-label" for="file">Upload a image</label>
         <div id="preview">
           <img id="image-preview">
+          <video id="cam-preview"></video>
+          <canvas id="cam-canvas"></canvas>
         </div>
         <img id="image-png" src="s-1.png">
         <button id="submit">Snap!</button>
@@ -71,6 +75,7 @@
       <div class="thumbnails">
       </div>
     </form>
+
     <div class="img-modal">
       <h2><?php if (isset($data['username'])) { echo $data['username']; } else { echo 'N/A'; }?><span id="img-close">×</span></h2>
       <hr>
