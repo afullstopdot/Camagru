@@ -22,16 +22,16 @@
     <header>
       <center id="hash"></center>
       <ul class="topnav" id="myTopnav">
-        <li><a class="active" href="<?php echo SITE_HOST; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
+        <li><a class="active" href="<?php echo SITE_URL; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
         <?php 
           if (isset($_SESSION['user'])) { 
             echo '
-              <li><a href="' . SITE_HOST . '/auth/logout">Log out</a></li>
+              <li><a href="' . SITE_URL . '/auth/logout">Log out</a></li>
               <li class="toggle"><a href="#">Toggle</a></li>
             '; 
           } 
           else { 
-            echo '<li><a href="' . SITE_HOST . '/auth/login">Log in</a></li>'; 
+            echo '<li><a href="' . SITE_URL . '/auth/login">Log in</a></li>'; 
           }
         ?>
         <li class="icon"><a href="javascript:void(0);" style="font-size:15px;" onclick="open_close()">☰</a></li>

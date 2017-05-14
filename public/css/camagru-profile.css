@@ -377,7 +377,6 @@ h2 {
 
 	.options {
 		margin: 10px;
-		/*display: none;*/
 	}
 
 	.options img {
@@ -388,6 +387,11 @@ h2 {
 	    margin-top: 5px;
 	    height: 350px;
 	    width: 100%;
+	}
+
+	#cam-preview {
+		height: 350px;
+	    width: 196px;
 	}
 
 	#preview img {

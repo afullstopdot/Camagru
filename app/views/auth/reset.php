@@ -5,8 +5,8 @@
     <header>
 
       <ul class="topnav" id="myTopnav">
-        <li><a class="active" href="<?php echo SITE_HOST; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
-        <?php if (isset($_SESSION['user'])) { echo '<li><a href="' . SITE_HOST . '/auth/logout">Log out</a></li>'; } else { echo '<li><a href="' . SITE_HOST . '/auth/login">Log in</a></li>'; } ?>
+        <li><a class="active" href="<?php echo SITE_URL; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
+        <?php if (isset($_SESSION['user'])) { echo '<li><a href="' . SITE_URL . '/auth/logout">Log out</a></li>'; } else { echo '<li><a href="' . SITE_URL . '/auth/login">Log in</a></li>'; } ?>
         <li class="icon"><a href="javascript:void(0);" style="font-size:15px;" onclick="open_close()">☰</a></li>
       </ul>
 
@@ -15,7 +15,7 @@
 
     <?php if (file_exists(ROOT_DIR . '/app/views/flash/flash.php')) { require_once ROOT_DIR . '/app/views/flash/flash.php'; } ?>
 
-    <form id="reset" name="reset" action="<?php echo SITE_HOST; ?>/auth/reset" method="POST">
+    <form id="reset" name="reset" action="<?php echo SITE_URL; ?>/auth/reset" method="POST">
       <?php if (isset($data['resp'])) { 
           echo '
             <div class="container">

@@ -4,20 +4,20 @@
     <header>
       <center id="hash"></center>
       <ul class="topnav" id="myTopnav">
-        <li><a class="active" href="<?php echo SITE_HOST; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
+        <li><a class="active" href="<?php echo SITE_URL; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
         <?php 
           if (isset($_SESSION['user'])) { 
-            echo '<li><a href="' . SITE_HOST . '/auth/logout">Log out</a></li>'; 
+            echo '<li><a href="' . SITE_URL . '/auth/logout">Log out</a></li>'; 
           } 
           else { 
-            echo '<li><a href="' . SITE_HOST . '/auth/login">Log in</a></li>'; 
+            echo '<li><a href="' . SITE_URL . '/auth/login">Log in</a></li>'; 
           } 
         
           if (isset($_SESSION['user'])) { 
-            echo '<li><a href="' . SITE_HOST . '/profile/home">Profile</a></li>'; 
+            echo '<li><a href="' . SITE_URL . '/profile/home">Profile</a></li>'; 
           } 
           else { 
-            echo '<li><a href="' . SITE_HOST . '/auth/signup">Create Account</a></li>'; 
+            echo '<li><a href="' . SITE_URL . '/auth/signup">Create Account</a></li>'; 
           } 
         ?>
         <li class="icon"><a href="javascript:void(0);" style="font-size:15px;" onclick="open_close()">☰</a></li>
