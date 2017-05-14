@@ -213,6 +213,95 @@ class profile extends Controller
 					]);
 				}
 			}
+			else if (isset($_POST['selection']) && isset($_POST['cam-image'])) {
+				/*
+				** Check if image type is supported png and jpeg
+				** Also that a valid asset has been requested (selection key in $_POST)
+				*/
+
+				if (file_exists(ROOT_DIR . ASSET_PATH . ASSET_NAME[$_POST['selection']])) {
+
+					/*
+					** ImageSuperimpose will merge two images
+					*/
+
+					$image = $this->helper('ImageSuperimpose');
+					$upload = $this->helper('ImageUpload');
+
+					/*
+					** ImageSuperimpose function merge creates a new file
+					** of the two images passed to constructor
+					** arguments passed is the path where the image will be saved
+					** and if the first image should be treated as raw file contents
+					** on success it will return the path of the merged image
+					*/
+
+					if (is_object($image) && is_object($upload)) {
+
+						/*
+						** image_1 can be passed raw (because we dont wanna save the image uploaded by client)
+						** image_2 will be the path to asset (since its already on the server)
+						*/
+
+						$cam_img = str_replace('data:image/jpeg;base64,', '', $_POST['cam-image']);
+
+						$image->set_images(
+							base64_decode($cam_img), 
+							ROOT_DIR . ASSET_PATH . ASSET_NAME[$_POST['selection']]
+						);
+
+						$res = $image->merge(ROOT_DIR . UPLOAD_DIR, true);
+
+						/*
+						** If file is merged and saved, we return its path
+						** to the ajax call so thumbnails could be updated
+						** also insert update in db
+						*/
+
+						if (!$res) {
+							echo json_encode([
+								'status' => 400,
+								'message' => 'Error while superimposing'
+							]);
+						}
+						else {
+							/*
+							** Convert the path returned (local path) to
+							** url path for use
+							*/
+
+							$url = $upload->absolute_to_url($res);
+							$this->model('gallery')->addUpload(
+								$this->user()->user_id,
+								$url
+							);
+
+							echo json_encode([
+								'status' => 200,
+								'path' => $url,
+							]);
+						}
+					}
+					else {
+						echo json_encode([
+							'status' => 500,
+							'message' => 'Something internally went wrong'
+						]);
+					}
+				}
+				else {
+					
+					/*
+					** The preview would tell the user if the image type was shit
+					** so that means something went wrong with asset selection
+					*/
+
+					echo json_encode([
+						'status' => 501,
+						'message' => 'Invalid asset requested',
+					]);
+				}
+			}
 			else {
 				echo json_encode([
 					'status' => 202,

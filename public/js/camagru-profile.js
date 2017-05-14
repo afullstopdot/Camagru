@@ -168,43 +168,83 @@ window.onload =  () => {
 	if (form)
 	{
 		form.addEventListener('submit', (e) => {
+			const 	req = new XMLHttpRequest();
+			var 	data;
+
 			if (!state.cam) {
-				const data = new FormData(form);
-				const req = new XMLHttpRequest();
-	 
-				if (asset.index > -1) {
-					data.append(
-						'selection',
-						asset.index
-					);
-
-					if (button) {
-						button.innerHTML = 'Processing image...';
-					}
-					req.open('POST', url + 'profile/save', true);
-					req.onload = (e) => {
-						if (req.status == 200) {
-							const resp = JSON.parse(req.responseText);
-
-							if (resp.status == 200) {
-								button.innerHTML = 'Image has been uploaded!';
-								add_thumbnail(thumbnail, resp.path, modal, form, modal_img, true);
-								reset_preview(png, button, allow_preview);
-								window.setTimeout(function () {
-									button.innerHTML = 'Snap!';
-									button.style.background = 'rgba(28, 33, 30, 0.46)';
-					            }, 2000);
-							}
-							else {
-								button.innerHTML = 'Oops, error occured';
-							}
-						}
-					};
-					req.send(data);
-				}
+				data = new FormData(form);
 			}
 			else {
-				//snap picture with cam and send base64 3ncoded img to profile/save
+
+				const 	video 		= document.getElementById('cam-preview');
+				const 	canvas 		= document.getElementById('cam-canvas');
+				const 	width 		= 475;
+				var 	height 		= 500;
+				var 	streaming 	= false;
+				
+				data = new FormData();
+
+				if (typeof video !== 'undefined' && typeof canvas !== 'undefined') {
+
+					/*
+					** insert getContext explanation
+					*/
+
+					const context = canvas.getContext('2d');
+
+					if (typeof context !== 'undefined') {
+
+						/*
+						** insert drawImage explanation
+						*/
+
+					    context.drawImage(video, 0, 0, width, height);
+
+					    /*
+					    ** insert toDataURL explanation
+					    */
+
+					    data.append(
+							'cam-image',
+						    canvas.toDataURL('image/jpeg')
+						);
+					}
+				}
+			}
+
+			/*
+			** Send post request
+			*/
+
+			if (asset.index > -1) {
+				data.append(
+					'selection',
+					asset.index
+				);
+
+				if (button) {
+					button.innerHTML = 'Processing image...';
+				}
+				req.open('POST', url + 'profile/save', true);
+				req.onload = (e) => {
+					if (req.status == 200) {
+						const resp = JSON.parse(req.responseText);
+
+						if (resp.status == 200) {
+							button.innerHTML = 'Image has been uploaded!';
+							add_thumbnail(thumbnail, resp.path, modal, form, modal_img, true);
+							reset_preview(png, button, allow_preview);
+							window.setTimeout(function () {
+								button.innerHTML = 'Snap!';
+								button.style.background = 'rgba(28, 33, 30, 0.46)';
+				            }, 2000);
+						}
+						else {
+							button.innerHTML = 'Oops, error occured';
+						}
+					}
+				};
+				req.send(data);
 			}
 			e.preventDefault();
 		}, false);
@@ -416,6 +456,7 @@ window.onload =  () => {
 
       			if (typeof video !== 'undefined') {
       				video.style.display = 'none';
+	      			options.style.display = 'none';
       			}
       		}
       	}
@@ -442,6 +483,8 @@ window.onload =  () => {
       			input.disabled = true;
       			label.style.background = 'rgb(27, 30, 27)';
       			label.innerHTML = 'Upload Disabled';
+      			allow_preview = true;
+      			options.style.display = 'inline-block';
 
       			const video = document.getElementById('cam-preview');
 
@@ -457,31 +500,39 @@ window.onload =  () => {
     ** Access webcam
     */
 
-    (function(state) {
-    	if (state.cam) {
-    		const upload 	= document.getElementById('image-preview');
-    		const video 	= document.getElementById('cam-preview');
-    		const width 	= 475;
-    		var height 		= 500;
-    		var streaming 	= false;
+    (function() {
+		const upload 	= document.getElementById('image-preview');
+		const video 	= document.getElementById('cam-preview');
+		const canvas 	= document.getElementById('cam-canvas');
+		const width 	= 475;
+		var height 		= 500;
+		var streaming 	= false;
 
-    		if (typeof upload !== 'undefined' && typeof video !== 'undefined') {
+		if (typeof upload !== 'undefined' && typeof video !== 'undefined') {
 
-				/*
-				** Constrainst for getUserMedia, request video only
-				*/
+			/*
+			** Constrainst for getUserMedia, request video only
+			*/
 
-				const constraints = {
-			      audio: false, 
-			      video: true
-			    };
+			const constraints = {
+		      audio: false, 
+		      video: true
+		    };
 
-			    /*
-			    ** Make promise to getUserMedia
-			    */
+		    /*
+		    ** Make promise to getUserMedia
+		    */
 
-			    navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+		    const mediaStream = navigator.mediaDevices.getUserMedia(constraints);
+
+		    if (typeof mediaStream !== 'undefined') {
+			    mediaStream.then(function(stream) {
 			    	video.srcObject = stream;
+
+			    	/*
+			    	** Play webcam, update canvas
+			    	*/
+
 			        video.onloadedmetadata = function (e) {
 			        	video.play();
 			            video.addEventListener('canplay', function(e) {
@@ -503,17 +554,11 @@ window.onload =  () => {
 			            }, false);
 			        };
 			    }).catch(function (err) {
-
-					/*
-					** On error update user, for dev just log error to console
-					*/
-
-					console.log(err.name + ": " + err.message);
+			    	console.log(err.name + ": " + err.message);
 			    });
 			}
-    	}
-    })(state);
-
+		}
+    })();
 };
 
 /*
@@ -719,35 +764,5 @@ function close_modal(modal, form, likes)
 		modal.style.display = 'none';
 		form.style.opacity = '1';
 		likes.innerHTML = '?';
-	}
-}
-
-/*
-** Take still picture with webcam
-*/
-
-function snap() {
-	const video = document.getElementById('cam-preview');
-
-	if (typeof video !== 'undefined') {
-  		const 	photo = document.getElementById('image-preview');
-  		var 	data;
-
-  		if (typeof video !== 'undefined') {
-
-  			/*
-			** Hide video element and show canvas,
-			** draw on the canvas
-			*/
-
-			video.style.display = "none";
-			canvas.style.display = "block";
-			startbutton.innerHTML = "RETAKE";
-			canvas.width = width;
-			canvas.height = height;
-
-			//working on insta
-
-  		}
 	}
 }

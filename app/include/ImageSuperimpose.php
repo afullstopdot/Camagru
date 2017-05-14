@@ -87,16 +87,8 @@ class ImageSuperimpose {
 			*/
 
 			if (imagecopy($dst, $src, 0, 0, 0, 0, $dst_img_width, $dst_img_height)) {
-				switch ($dst_img_type) {
-					case IMAGETYPE_JPEG:
-						$name = $path . time() . '.jpeg';
-						imagejpeg($dst, $name);
-						break;
-					case IMAGETYPE_PNG:
-						$name = $path . time() . '.png';
-						imagepng($dst, $name);
-						break;
-				}
+				$name = $path . time() . '.jpeg';
+				imagejpeg($dst, $name);
 				$result = $name;
 			}
 			else {

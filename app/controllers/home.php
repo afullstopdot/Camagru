@@ -210,6 +210,24 @@ class home extends Controller
       $uploads  = $this->model('gallery')->getUploads((int) $param * 10);
       $comments = $this->model('gallery')->getComments();
       $likes    = $this->model('gallery')->getLikes();
+
+      /*
+      ** Run through comments and use htmlentities/strip_tags
+      ** to present XSS attacks if the comments
+      ** have tags or usernames
+      */
+
+      $count = 0;
+      foreach ($comments as $comment) {
+        foreach ($comment as $key => $value) {
+          if ($key === 'comment' || $key === 'username') {
+            $comments[$count][$key] = htmlentities($value);
+            $comments[$count][$key] = strip_tags($comments[$count][$key], ENT_QUOTES);
+          }
+        }
+        $count++;
+      }
+
       if (is_array($uploads) && !empty($uploads)) {
         echo json_encode([
           'status' => 200,
