@@ -2,6 +2,14 @@
 
 class profile extends Controller
 {
+	private $asset =  [
+	  's-1.png',
+	  's-2.png',
+	  's-3.png',
+	  's-4.png',
+	  's-5.png',
+	  's-6.png'
+	];
 
 	/*
 	** Render edit home, where you can snap pics, upload pics, delete pics
@@ -129,7 +137,7 @@ class profile extends Controller
 					** Also that a valid asset has been requested (selection key in $_POST)
 					*/
 
-					if ($upload->valid_ext() && file_exists(ROOT_DIR . ASSET_PATH . ASSET_NAME[$_POST['selection']])) {
+					if ($upload->valid_ext() && file_exists(ROOT_DIR . ASSET_PATH . $this->asset[$_POST['selection']])) {
 
 						/*
 						** ImageSuperimpose will merge two images
@@ -154,7 +162,7 @@ class profile extends Controller
 
 							$image->set_images(
 								$upload->content(true), 
-								ROOT_DIR . ASSET_PATH . ASSET_NAME[$_POST['selection']]
+								ROOT_DIR . ASSET_PATH . $this->asset[$_POST['selection']]
 							);
 
 							$res = $image->merge(ROOT_DIR . UPLOAD_DIR, true);
@@ -219,7 +227,7 @@ class profile extends Controller
 				** Also that a valid asset has been requested (selection key in $_POST)
 				*/
 
-				if (file_exists(ROOT_DIR . ASSET_PATH . ASSET_NAME[$_POST['selection']])) {
+				if (file_exists(ROOT_DIR . ASSET_PATH . $this->asset[$_POST['selection']])) {
 
 					/*
 					** ImageSuperimpose will merge two images
@@ -247,7 +255,7 @@ class profile extends Controller
 
 						$image->set_images(
 							base64_decode($cam_img), 
-							ROOT_DIR . ASSET_PATH . ASSET_NAME[$_POST['selection']]
+							ROOT_DIR . ASSET_PATH . $this->asset[$_POST['selection']]
 						);
 
 						$res = $image->merge(ROOT_DIR . UPLOAD_DIR, true);
