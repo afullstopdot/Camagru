@@ -6,27 +6,31 @@ Web Application for superimposing images, either by uploading file or using a we
 
 To run this app clone the repository in the root of the web server
 
-Update the conf file database with the correct MySQL login information
-For omniauth, update the access keys
-
 ### Prerequisites
 
 What things you need to install the software and how to install them
 
 ```
-PHP version 5.6.25, Web Server, PHP GD Library
+PHP version 5.6.25, Apache Web Server, PHP GD Library
 ```
 
 ### Installing
 
+### ./install.sh
+
 ```
-Run the 'install.sh' shell script to move the files/folders to fit the right file structure | ./install.sh
+Run the 'install.sh' shell script to move the files/folders to fit the right file structure
 ```
 
 ## Updating the init file
 
 ```
 Update the init file if you want the omniauth strategies to work (APP ID and Secret)
+```
+
+## Updating the config files
+```
+Update the config file setup.php `app/conf/setup.php` to have the correct MySQL login information
 ```
 
 ## Authors
