@@ -4,7 +4,7 @@
 */
 
 // var url = 'http:\/\/10.0.0.150:80\/Camagru\/public\/';
-var url = 'http:\/\/localhost:80\/';
+var url = 'http:\/\/localhost:8080\/';
 // var url = 'http:\/\/afullstopdot.duckdns.org\/Camagru\/public\/';
 
 window.onload =  () => {

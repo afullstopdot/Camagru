@@ -3,7 +3,7 @@
 ** the communication will be done using Ajax
 */
 
-var url = 'http:\/\/localhost\/';
+var url = 'http:\/\/localhost:8080\/';
 
 var color_red = '#710909';
 var color_blue = '#119261';

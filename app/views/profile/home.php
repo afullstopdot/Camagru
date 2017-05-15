@@ -60,11 +60,21 @@
       </div>
       <div id="option-list" class="options">
           <?php
+            
+            $asset =  [
+              's-1.png',
+              's-2.png',
+              's-3.png',
+              's-4.png',
+              's-5.png',
+              's-6.png'
+            ];
+
             /*
             ** If you want to change assets, go to init file
             */
-            foreach (ASSET_NAME as $key => $value) {
-              echo '<img src="'. ASSET_PATH . $value . '">';
+            foreach ($asset as $key => $value) {
+              echo '<img src="'. SITE_URL . ASSET_PATH . $value . '">';
             }
           ?>
       </div>

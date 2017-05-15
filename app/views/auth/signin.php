@@ -7,6 +7,7 @@
       <ul class="topnav" id="myTopnav">
         <li><a class="active" href="<?php echo SITE_URL; ?>" style="font-family: 'Architects Daughter', cursive;">Camagru</a></li>
         <li><a href="<?php echo SITE_URL; ?>/auth/reset">Reset Account</a></li>
+        <li><a href="<?php echo SITE_URL; ?>/auth/signup">Create Account</a></li>
         <?php if (isset($_SESSION['user'])) { echo '<li><a href="' . SITE_URL . '/auth/logout">Log out</a></li>'; } ?>
         <li class="icon"><a href="javascript:void(0);" style="font-size:15px;" onclick="open_close()">☰</a></li>
       </ul>
@@ -31,7 +32,7 @@
         <fieldset id="leglin"><legend align="center"><p style="color: white;">or</p></legend></fieldset>
         <div id="oauth">
           <a href="<?php echo SITE_URL; ?>/auth/slack/signin"><button id="slack" style="font-family: 'Architects Daughter', cursive;" type="button">Slack</button></a>
-          <a href="<?php echo SITE_URL; ?>/google/signin"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
+          <a href="<?php echo SITE_URL; ?>/auth/google/signin"><button id="google" style="font-family: 'Architects Daughter', cursive;" type="button">Google+</button></a>
           <a href="<?php echo SITE_URL; ?>/auth/fourtytwo/signin"><button id="fourty" style="font-family: 'Architects Daughter', cursive;" type="button">42</button></a>
           <a href="<?php echo SITE_URL; ?>/auth/github/signin"><button id="github" style="font-family: 'Architects Daughter', cursive; color: black;" type="button">Github</button></a>
         </div>

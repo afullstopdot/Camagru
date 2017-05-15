@@ -98,17 +98,40 @@ define('E42_PROFILE', 'https://api.intra.42.fr/v2/me');
 */
 
 define('ASSET_PATH', '/app/views/assets/');
-define('ASSET_NAME', [
-  's-1.png',
-  's-2.png',
-  's-3.png',
-  's-4.png',
-  's-5.png',
-  's-6.png'
-]);
 
 /*
 ** Directory where all images will be saved
 */
 
 define('UPLOAD_DIR', '/app/views/uploads/');
+
+/*
+** Create upload, asset and img folders if it doesnt exist
+*/
+
+if (!file_exists(ROOT_DIR . '/app/views/uploads')) {
+  /*
+  ** Images that are uploaded are saved here
+  */
+  if (!mkdir(ROOT_DIR . '/app/views/uploads', 0700)) {
+    die('<b>Failed to create uploads folder, please manually do so before running app</b>');
+  }
+}
+
+if (!file_exists(ROOT_DIR . '/public/imgs')) {
+  /*
+  ** BG images saved here
+  */
+  if (!mkdir(ROOT_DIR . '/public/imgs', 0700)) {
+    die('<b>Failed to create imgs folder, please manually do so before running app</b>');
+  }
+}
+
+if (!file_exists(ROOT_DIR . '/app/views/assets')) {
+  /*
+  ** Background images saved here
+  */
+  if (!mkdir(ROOT_DIR . '/app/views/assets', 0700)) {
+    die('<b>Failed to create imgs folder, please manually do so before running app</b>');
+  }
+}
