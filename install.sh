@@ -1,5 +1,5 @@
 while true; do
-	read -p "Do you wish to install this program?" yn
+	read -p "Do you wish to install this program? " yn
 	case $yn in
 		[Yy]* ) mv public ..; mv app ..; mv .htaccess ..; mv index.php ..; cd ..; rm -rf Camagru; break;;
 		[Nn]* ) exit;;
