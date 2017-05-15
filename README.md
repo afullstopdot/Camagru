@@ -16,8 +16,6 @@ PHP version 5.6.25, Apache Web Server, PHP GD Library
 
 ### Installing
 
-### ./install.sh
-
 ```
 Run the 'install.sh' shell script to move the files/folders to fit the right file structure
 ```
