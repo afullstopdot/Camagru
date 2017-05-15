@@ -23,7 +23,7 @@ Run the 'install.sh' shell script to move the files/folders to fit the right fil
 ## Updating the init file
 
 ```
-Update the init file if you want the omniauth strategies to work (APP ID and Secret)
+Update the init file `app/init.php` if you want the omniauth strategies to work (APP ID and Secret)
 ```
 
 ## Updating the config files
