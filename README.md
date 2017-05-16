@@ -6,15 +6,15 @@ Web Application for superimposing images, either by uploading file or using a we
 
 To run this app clone the repository in the root of the web server
 
-### Prerequisites
+## Prerequisites
 
-What things you need to install the software and how to install them
+What things you need to run the web application
 
 ```
-PHP version 5.6.25, Apache Web Server, PHP GD Library
+PHP version 5.6.25 or greater , Apache Web Server, PHP GD Library
 ```
 
-### Installing
+## Installing
 
 ```
 Run the 'install.sh' shell script to move the files/folders to fit the right file structure
